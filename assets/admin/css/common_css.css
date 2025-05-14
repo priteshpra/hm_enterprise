@@ -1,0 +1,62 @@
+.invalid
+{ 
+    //border: 2px solid;
+    border-color: #B94A48;
+}
+.inactive_status_icon
+{
+    width: 16px; height: 16px; color: red;
+}
+.active_status_icon
+{
+    width: 16px; height: 16px; color: green;
+}
+.loading_status_icon
+{
+    width: 16px; height: 16px; color: black;
+}
+.edit_icon_class
+{
+    width: 16px; height: 16px; cursor:pointer;color: black;
+}
+.status_change
+{
+    cursor:pointer;
+}
+
+/* Start : Snippet to display in-line notification messages -- PRIYA BHOJANI -- */
+.alert-box 
+{
+        color:#555;
+        border-radius:10px;
+        font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px;
+        padding:10px 14px;
+        
+}
+.alert-box span {
+        font-weight:bold;
+        text-transform:uppercase;
+}
+.error {
+        background:#ffecec  no-repeat 10px 50%;
+        border:1px solid #f5aca6;
+}
+.success {
+        background:#e9ffd9 no-repeat 10px 50%;
+        border:1px solid #a6ca8a;
+}
+.warning {
+        background:#fff8c4 no-repeat 10px 50%;
+        border:1px solid #f2c779;
+}
+.notice {
+        background:#e3f7fc no-repeat 10px 50%;
+        border:1px solid #8ed9f6;
+}
+
+#profile-dropdown
+{
+    display: block;left: 50px;position: absolute;top: 57px;width: 200px;
+}
+        
+/* End : Snippet to display in-line notification messages -- PRIYA BHOJANI -- */

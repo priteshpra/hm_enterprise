@@ -1,0 +1,51 @@
+<div class="container">
+    <h4 class="header m-t-0">
+        <a href="<?php echo site_url('admin/masters/service') ?>"><strong><?php echo label('msg_lbl_service') ?></strong>
+        </a>
+    </h4>
+    <div class="card-panel col s12">
+        <form class="col s12" id="AddForm" method="post" action="<?php echo site_url('admin/masters/service/' . $page_name) ?>">
+            <input id="ServiceID" name="ServiceID" value="<?php echo isset($data->ServiceID) ? $data->ServiceID : 0; ?>" type="hidden" />
+            <div class="row">
+                <div class="input-field col s12 m6">
+                    <input type="text" name="Service" id="Service" maxlength="100" class="form-control empty_validation_class" value="<?php echo @$data->Service; ?>">
+                    <label name="Service" class=""><?php echo label('msg_lbl_servicename'); ?></label>
+                </div>
+                <div class="input-field col s12 m6">
+                    <input type="text" name="Qty" id="Qty" maxlength="50" class="form-control empty_validation_class" value="<?php echo @$data->Qty; ?>">
+                    <label name="Qty" class=""><?php echo label('msg_lbl_qty'); ?></label>
+                </div>
+                <div class="input-field col s12 m6">
+                    <input type="text" name="Rate" id="Rate" maxlength="15" class="form-control empty_validation_class AmountOnly" value="<?php echo @$data->Rate; ?>">
+                    <label name="Rate" class=""><?php echo label('msg_lbl_rate'); ?></label>
+                </div>
+                <div class="input-field radio_input_field_add_edit col s12 m6">
+                    <label><?php echo label('msg_lbl_isfixcost'); ?></label><br />
+                    <input name="IsFixCost" type="radio" id="Yes" value="Yes" checked="checked" <?php echo ((isset($data->IsFixCost) && @$data->IsFixCost == 'Yes')) ? 'checked="checked"' : ''; ?>>
+                    <label for="Yes"><?php echo label('msg_lbl_yes') ?></label>
+                    <input name="IsFixCost" type="radio" id="No" value="No" <?php echo ((isset($data->IsFixCost) && @$data->IsFixCost == 'No')) ? 'checked="checked"' : ''; ?>>
+                    <label for="No"><?php echo label('msg_lbl_no'); ?></label>
+                </div>
+                <div class="input-field col s12 m6">
+                    <?php echo @$Category; ?>
+                </div>
+                <div class="clearfix"></div>
+                <div class="input-field col s12 m6">
+                    <input type="checkbox" class="" name="Status" id="Status" <?php
+                                                                                if (isset($data->Status) && @$data->Status == INACTIVE) {
+                                                                                    echo "";
+                                                                                } else {
+                                                                                    echo "checked='checked'";
+                                                                                }
+                                                                                ?>>
+                    <label for="Status"><?php echo label('msg_lbl_status'); ?></label>
+                </div>
+                <div class="input-field col s12 m6">
+                    <button class="btn waves-effect waves-light right" id="button_submit" name="button_submit" type="button"><?php echo label('msg_lbl_submit'); ?></button>
+                    <?php echo $loading_button; ?>
+                    <a href="<?php echo site_url('admin/masters/service') ?>" class="clear-all right">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+ticket
+city
+subject - combo
+
+
+ALTER TABLE `ss_ticket` ADD `SubjectID` INT NOT NULL DEFAULT '0' AFTER `UserID`, ADD `CityID` INT NOT NULL DEFAULT '0' AFTER `SubjectID`;
+
+
+fcm token not found
+
+check in out
+
+edit profile
+
++ high light details
+
+add employee
+
+pdf
+
+invoice end date
+
+status code gujrat(24)
+
+online gst 5%
+
+Invoice
+Notes
+ OC Ahmedabad
+
+
+ALTER TABLE `ss_state` ADD `GSTCode` VARCHAR(50) NULL AFTER `CountryID`;
+
+
+Web
+
+1. Upexa change Font color of City Combo in header. Check in CRM.
+2. Sites listing icons are not proper.
+3. Make menu plural as we did in App.
+    DONE
+4. Inspection Details, Ans wrong lage 6, I think tame value display karo 6o ans nahi.
+    DONE
+5. Employees, Visitors, Companies, Sites, Penalties, Attendance, Tickets, Inspections aa badha listing ma City name display karo.
+6. Tax related and biji fields Configuration ma nathi.
+    DONE
+7. State ma GST Code add kari do google kari ne.
+    DONE
+8. Service Categories nu Master kayu 6?
+    DONE (Fix Rate)
+
+
+ALTER TABLE `ss_invoice` ADD `Notes` TEXT NULL AFTER `Invoice`;
+
+
+admin
+employee
+gatekeeper
+company
+
+company employee
+
+
+Master :
+
+
+API Points
+1. On Home Page data is not changing even we are changing Cities. It should be based on City.
+=>API= filter with City API
+2. Once Converted Visitor to Customer, it should not go away. Data should remain as it is.
+=>API = Api Issue - DONE
+7. I have added Leadership LLP but it comes at 3rd position I don't know why it is not on Top of the List. It displays same GST number to all Visitors. Display GST NUmber in Detail page as well.
+=> API = ADD GST ni response
+
+10. In Add Quotation Estimate No should be Autoincre0ment. Bring Site Name in Quotation Name and Site Address in Display address. Both will be non editable. Same for GST No.
+=> API change
+13. Shows wrong value in Quotation PDF. Quotation No is different than what I have entered, Sub Total is wrong, Total in Words is wrong. Rounding is wrong. To Company is wrong. Display Quotation Time along with Date. Shows wrong company name in Quotation. I have added Leadership LLp and it is showing The Cleaning Company.
+=> API side
+7. Visitor details SiteList name, Gst number not comming.
+=> Api Point
+19. Need AddTeamDefinition Api 
