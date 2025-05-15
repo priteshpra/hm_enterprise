@@ -16,9 +16,10 @@ class Visitor_model extends CI_Model
         $Name = getStringClean(($this->input->post('Name') != '') ? $this->input->post('Name') : '');
         $EmailID = getStringClean(($this->input->post('EmailID') != '') ? $this->input->post('EmailID') : '');
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
+        $LeadType = ($this->input->post('LeadType') != '') ? $this->input->post('LeadType') : -1;
         $CityID = $this->CityID;
 
-        $sql = "call usp_A_GetVisitor( '$PageSize','$CurrentPage','$Name','$EmailID','$Status','$CityID')";
+        $sql = "call usp_A_GetVisitor( '$PageSize','$CurrentPage','$Name','$EmailID','$Status', '$LeadType','$CityID')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -34,7 +35,7 @@ class Visitor_model extends CI_Model
         $array['StateID'] = getStringClean((isset($array['StateID'])) ? $array['StateID'] : '');
         $array['PinCode'] = getStringClean((isset($array['PinCode'])) ? $array['PinCode'] : '');
         $array['LeadType'] = getStringClean((isset($array['LeadType'])) ? $array['LeadType'] : '');
-        
+
         $array['Status'] = getStringClean((isset($array['Status']) && $array['Status'] == 'on') ? ACTIVE : INACTIVE);
         $array['CreatedBy'] = $this->session->userdata['UserID'];
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
@@ -111,5 +112,4 @@ class Visitor_model extends CI_Model
         $query->next_result();
         return $query->row();
     }
-
 }

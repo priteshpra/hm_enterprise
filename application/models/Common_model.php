@@ -2,68 +2,75 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Common_model extends CI_Model{
-    function __construct() {
+class Common_model extends CI_Model
+{
+    function __construct()
+    {
         parent::__construct();
     }
 
-    public function CheckDuplicate($data){
+    public function CheckDuplicate($data)
+    {
         $data['DataValue'] = getStringClean($data['DataValue']);
-        $sql = "CALL usp_CheckDuplicate('". 
-                $data['TableName'] ."','". 
-                $data['DuplicateField'] . "','".
-                $data['DataValue']."','".
-                $data['UniqueField']."','". 
-                $data['ID']."')";
-        $query = $this->db->query($sql);
-        $query->next_result();
-        return $query->row();   
-    }
-    public function CheckDuplicateDouble($data){
-        $sql = "CALL usp_CheckDoubleDuplicate('". 
-                $data['TableName'] ."','". 
-                $data['DuplicateField'] . "','".
-                $data['DataValue']."','".
-                $data['SecondDuplicateField'] . "','".
-                $data['SecondDataValue']."','".
-                $data['UniqueField']."','". 
-                $data['ID']."')";
-        $query = $this->db->query($sql);
-        $query->next_result();
-        return $query->row();   
-    }
-    public function ChangeStatus($data) {
-        $sql = "CALL usp_ChangeStatus('".
-                        $data['TableName']."','".
-                        $data['UniqueField']."','".
-                        $data['ID']."','".
-                        $data['Status']."','".
-                        $data['UserID']."');";
+        $sql = "CALL usp_CheckDuplicate('" .
+            $data['TableName'] . "','" .
+            $data['DuplicateField'] . "','" .
+            $data['DataValue'] . "','" .
+            $data['UniqueField'] . "','" .
+            $data['ID'] . "')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->row();
-
     }
-    public function GetEmailTemplate($ID){ 
-        $sql = "CALL usp_GetEmailtemplateByID('".$ID."')";
+    public function CheckDuplicateDouble($data)
+    {
+        $sql = "CALL usp_CheckDoubleDuplicate('" .
+            $data['TableName'] . "','" .
+            $data['DuplicateField'] . "','" .
+            $data['DataValue'] . "','" .
+            $data['SecondDuplicateField'] . "','" .
+            $data['SecondDataValue'] . "','" .
+            $data['UniqueField'] . "','" .
+            $data['ID'] . "')";
+        $query = $this->db->query($sql);
+        $query->next_result();
+        return $query->row();
+    }
+    public function ChangeStatus($data)
+    {
+        $sql = "CALL usp_ChangeStatus('" .
+            $data['TableName'] . "','" .
+            $data['UniqueField'] . "','" .
+            $data['ID'] . "','" .
+            $data['Status'] . "','" .
+            $data['UserID'] . "');";
+        $query = $this->db->query($sql);
+        $query->next_result();
+        return $query->row();
+    }
+    public function GetEmailTemplate($ID)
+    {
+        $sql = "CALL usp_GetEmailtemplateByID('" . $ID . "')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->row_array();
-        
     }
-    
-    public function getDeviceInfo($ID){
+
+    public function getDeviceInfo($ID)
+    {
         $query = $this->db->query("CALL usp_GetDeviceInfo('$ID')");
         $query->next_result();
         return $query->result();
     }
-     
-    public function getInlineQuery($sql){  
+
+    public function getInlineQuery($sql)
+    {
         $query = $this->db->query($sql);
         return $query->result();
     }
 
-    public function CheckEmailMobExist(){
+    public function CheckEmailMobExist()
+    {
         $EmailID = $this->input->post('EmailID');
         $MobileNo = $this->input->post('MobileNo');
         $ID = $this->input->post('ID');
@@ -72,29 +79,32 @@ class Common_model extends CI_Model{
         $query->next_result();
         return $query->row();
     }
-    public function ChangePassword($data){
-        if($data['OPassword'] == ""){
+    public function ChangePassword($data)
+    {
+        if ($data['OPassword'] == "") {
             $data['OPassword'] = -1;
         }
-        $sql = "call usp_ChangePassword('" . 
-                $data['ID'] . "','" .
-                $data['OPassword'] . "','" . 
-                $data['NewPassword'] . "')";
+        $sql = "call usp_ChangePassword('" .
+            $data['ID'] . "','" .
+            $data['OPassword'] . "','" .
+            $data['NewPassword'] . "')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->row();
     }
-    public function GetPatient($SearchText = ""){
+    public function GetPatient($SearchText = "")
+    {
         $query = $this->db->query("call usp_A_GetPatient_Combobox('$SearchText')");
         $query->next_result();
         return $query->result();
     }
-    public function getRecentAppointment($data){
+    public function getRecentAppointment($data)
+    {
         $sql = "CALL usp_A_GetRecentAppointment('" .
-                $data['PageSize']. "','".
-                $data['CurrentPage'].  "');";
+            $data['PageSize'] . "','" .
+            $data['CurrentPage'] .  "');";
         $query = $this->db->query($sql);
-        $query->next_result();        
+        $query->next_result();
         return $query->result();
     }
 
@@ -107,13 +117,13 @@ class Common_model extends CI_Model{
         } else {
             $EmployeeID = $this->session->userdata['UserID'];
         }
-        
-        $CityID = isset($data->CityID) ? $data->CityID :'-1';
+
+        $CityID = isset($data->CityID) ? $data->CityID : '-1';
         $sql = "call usp_MA_Dashboard('" .
             'Web' . "','" .
             $array['FilterType'] . "','" .
-            $EmployeeID . "','".
-            $CityID."')";
+            $EmployeeID . "','" .
+            $CityID . "')";
 
         $query = $this->db->query($sql);
         $query->next_result();
@@ -157,11 +167,12 @@ class Common_model extends CI_Model{
             $PageSize . "','" .
             $CurrentPage . "','" .
             $array['FilterType'] . "','" .
-            $EmployeeID . "')";
+            $EmployeeID . "','" .
+            783 . "'
+            )";
 
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
     }
-
 }

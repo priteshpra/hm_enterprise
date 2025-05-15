@@ -18,12 +18,12 @@ class Customer_model extends CI_Model
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
         $CityID = $this->CityID;
 
-        $sql = "call usp_A_GetCustomer( '$PageSize','$CurrentPage','$Name','$EmailID','$Status','$CityID')";
+        $sql = "call usp_A_GetCustomer( '$PageSize','$CurrentPage','$Name','$EmailID','$Status','$CityID', '783')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
     }
-    
+
     public function GetByID($ID = 0)
     {
         $sql = "call usp_A_GetCustomerByID('$ID')";
@@ -31,5 +31,4 @@ class Customer_model extends CI_Model
         $query->next_result();
         return $query->row();
     }
-
 }

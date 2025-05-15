@@ -211,7 +211,7 @@ class Service extends MY_Controller
                 $res = $this->addQuotation($json);
                 break;
             case 'resendOtp':
-                $res = $this->resendOtp($json); 
+                $res = $this->resendOtp($json);
                 break;
             case 'getReason':
                 $res = $this->getReason($json);
@@ -241,7 +241,7 @@ class Service extends MY_Controller
                 $res = $this->addInstallationInvoice($json);
                 break;
             case 'PrintChallan':
-                $res = $this->PrintChallan(5); 
+                $res = $this->PrintChallan(5);
                 break;
             case 'getInvoice':
                 $res = $this->getInvoice($json);
@@ -424,8 +424,8 @@ class Service extends MY_Controller
                 $res = $this->getQuotationChallan($json);
                 break;
             case 'InvoicePrintReceipt':
-                $res = $this->InvoicePrintReceipt(10); 
-                break; 
+                $res = $this->InvoicePrintReceipt(10);
+                break;
             case 'addPaymentReminder':
                 $res = $this->addPaymentReminder($json);
                 break;
@@ -474,141 +474,144 @@ class Service extends MY_Controller
         exit;
     }
     /* START COMMON FUNCTIONS */
-    function SplitTime($StartTime, $EndTime, $Duration="60", $CurrentTime){
-        $ReturnArray = array ();// Define output
-        $StartTime    = strtotime ($StartTime); //Get Timestamp
-        $EndTime      = strtotime ($EndTime); //Get Timestamp
-    
+    function SplitTime($StartTime, $EndTime, $Duration = "60", $CurrentTime)
+    {
+        $ReturnArray = array(); // Define output
+        $StartTime    = strtotime($StartTime); //Get Timestamp
+        $EndTime      = strtotime($EndTime); //Get Timestamp
+
         $AddMins  = $Duration * 60;
-    
+
         while ($StartTime < $EndTime) //Run loop
         {
-            $ST = date ("H:i", $StartTime);
+            $ST = date("H:i", $StartTime);
             $StartTime += $AddMins; //Endtime check
-            $ET = date ("H:i", $StartTime);
+            $ET = date("H:i", $StartTime);
 
-            if(strtotime($CurrentTime) > strtotime($ST))
-            {
-                if(strtotime($CurrentTime) < strtotime($ET))
-                    $ReturnArray[] = array("Start" => $ST, "End" => $ET, "IsPast"=>0, "IsCurrent"=>1);
+            if (strtotime($CurrentTime) > strtotime($ST)) {
+                if (strtotime($CurrentTime) < strtotime($ET))
+                    $ReturnArray[] = array("Start" => $ST, "End" => $ET, "IsPast" => 0, "IsCurrent" => 1);
                 else
-                    $ReturnArray[] = array("Start" => $ST, "End" => $ET, "IsPast"=>1, "IsCurrent"=>0);
+                    $ReturnArray[] = array("Start" => $ST, "End" => $ET, "IsPast" => 1, "IsCurrent" => 0);
             } else {
-                
-                $ReturnArray[] = array("Start" => $ST, "End" => $ET, "IsPast"=>0, "IsCurrent"=>0);
+
+                $ReturnArray[] = array("Start" => $ST, "End" => $ET, "IsPast" => 0, "IsCurrent" => 0);
             }
         }
         return $ReturnArray;
     }
-    public function getDeviceData($ID) {
+    public function getDeviceData($ID)
+    {
         $device = "";
         $EmployeeData =  $this->master_model->getQueryResult("call usp_A_GetDeviceInfoByID('" . $ID . "')");
-        if(isset($EmployeeData[0]->DeviceTokenID)) {
+        if (isset($EmployeeData[0]->DeviceTokenID)) {
             $device = $EmployeeData[0]->DeviceTokenID;
         }
         return $device;
     }
-    public function getEmployeeData($ID) {
+    public function getEmployeeData($ID)
+    {
         $name = "An Employee";
         $UserData =  $this->master_model->getQueryResult("call usp_GetEmployeeByID('" . $ID . "')");
-        if(isset($UserData[0]->UserID)) {
-            $name = $UserData[0]->FirstName.' '.$UserData[0]->LastName;
+        if (isset($UserData[0]->UserID)) {
+            $name = $UserData[0]->FirstName . ' ' . $UserData[0]->LastName;
         }
         return $name;
     }
-    public function getQuotationMessage($ID, $UserID) {
+    public function getQuotationMessage($ID, $UserID)
+    {
         $device = $this->getDeviceData($UserID);
         $employee = $this->getEmployeeData($UserID);
-        if($device != "") {
+        if ($device != "") {
             $_result_quotation = $this->master_model->getQueryResult("call usp_A_GetQuotationByID('" .
                 $ID . "'
             )");
-            if(isset($_result_quotation[0]->QuotationID)) {
+            if (isset($_result_quotation[0]->QuotationID)) {
                 $_result_sites = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                     $_result_quotation[0]->SitesID . "'
                 )");
-                if(isset($_result_sites[0]->SitesID)) {
-                    return $notif_text = $employee." has added a new Quotation of the ".$_result_sites[0]->SiteName.", Quotation No: ".$_result_quotation[0]->EstimateNo." on ".$_result_quotation[0]->EstimateDate.". HH Enterprise.";
-                    
+                if (isset($_result_sites[0]->SitesID)) {
+                    return $notif_text = $employee . " has added a new Quotation of the " . $_result_sites[0]->SiteName . ", Quotation No: " . $_result_quotation[0]->EstimateNo . " on " . $_result_quotation[0]->EstimateDate . ". HH Enterprise.";
                 }
             }
         }
     }
-    public function getInvoiceMessage($ID, $UserID) {
+    public function getInvoiceMessage($ID, $UserID)
+    {
         $device = $this->getDeviceData($UserID);
         $employee = $this->getEmployeeData($UserID);
-        if($device != "") {
+        if ($device != "") {
             $_result_invoice = $this->master_model->getQueryResult("call usp_A_GetInvoiceByID('" .
                 $ID . "'
             )");
-            if(isset($_result_invoice[0]->InvoiceID)) {
+            if (isset($_result_invoice[0]->InvoiceID)) {
                 $_result_sites = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                     $_result_invoice[0]->SitesID . "'
                 )");
-                if(isset($_result_sites[0]->SitesID)) {
-                    return $notif_text = $employee." has added a new Invoice of the ".$_result_sites[0]->SiteName.", Invoice No: ".$_result_invoice[0]->InvoiceNo." and Amount: ".$_result_invoice[0]->TotalAmount." on ".date('d-m-Y').". HH Enterprise.";
+                if (isset($_result_sites[0]->SitesID)) {
+                    return $notif_text = $employee . " has added a new Invoice of the " . $_result_sites[0]->SiteName . ", Invoice No: " . $_result_invoice[0]->InvoiceNo . " and Amount: " . $_result_invoice[0]->TotalAmount . " on " . date('d-m-Y') . ". HH Enterprise.";
                 }
             }
         }
     }
-    public function getSiteMessage($ID, $UserID) {
+    public function getSiteMessage($ID, $UserID)
+    {
         $device = $this->getDeviceData($UserID);
         $employee = $this->getEmployeeData($UserID);
-        if($device != "") {
-            
+        if ($device != "") {
+
             $_result_sites = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                 $ID . "'
             )");
-            if(isset($_result_sites[0]->SitesID)) {
-                return $notif_text = $employee." has added a new Site of the ".$_result_sites[0]->SiteName." on ".date('d-m-Y').". HH Enterprise.";
-                
+            if (isset($_result_sites[0]->SitesID)) {
+                return $notif_text = $employee . " has added a new Site of the " . $_result_sites[0]->SiteName . " on " . date('d-m-Y') . ". HH Enterprise.";
             }
-            
         }
     }
-    public function getLeadMessage($ID, $UserID) {
+    public function getLeadMessage($ID, $UserID)
+    {
         $device = $this->getDeviceData($UserID);
         $employee = $this->getEmployeeData($UserID);
-        if($device != "") {
-            
+        if ($device != "") {
+
             $_result_visitor = $this->master_model->getQueryResult("call usp_A_GetVisitorByID('" .
                 $ID . "'
             )");
-            if(isset($_result_visitor[0]->VisitorID)) {
-                return $employee." has added a new lead of ".$_result_visitor[0]->Name." on ".date('d-m-Y').". HH Enterprise.";
-               
+            if (isset($_result_visitor[0]->VisitorID)) {
+                return $employee . " has added a new lead of " . $_result_visitor[0]->Name . " on " . date('d-m-Y') . ". HH Enterprise.";
             }
-            
         }
     }
-    public function getPaymentMessage($ID, $UserID) {
+    public function getPaymentMessage($ID, $UserID)
+    {
         $device = $this->getDeviceData($UserID);
         $employee = $this->getEmployeeData($UserID);
-        if($device != "") {
+        if ($device != "") {
             $_result_payment = $this->master_model->getQueryResult("call usp_A_GetPaymentByID('" .
                 $ID . "'
             )");
-            if(isset($_result_payment[0]->CustomerPaymentID)) {
+            if (isset($_result_payment[0]->CustomerPaymentID)) {
                 $_result_invoice = $this->master_model->getQueryResult("call usp_A_GetInvoiceByID('" .
                     $_result_payment[0]->InvoiceID . "'
                 )");
-                if(isset($_result_invoice[0]->InvoiceID)) {
+                if (isset($_result_invoice[0]->InvoiceID)) {
                     $_result_sites = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                         $_result_invoice[0]->SitesID . "'
                     )");
-                    if(isset($_result_sites[0]->SitesID)) {
-                        return $notif_text = "Dear ".$_result_sites[0]->Name.", Thanks for making payment of Rs.".$_result_payment[0]->PaymentAmount." for Invoice No: ".$_result_invoice[0]->InvoiceNo.". HH Enterprise.";
+                    if (isset($_result_sites[0]->SitesID)) {
+                        return $notif_text = "Dear " . $_result_sites[0]->Name . ", Thanks for making payment of Rs." . $_result_payment[0]->PaymentAmount . " for Invoice No: " . $_result_invoice[0]->InvoiceNo . ". HH Enterprise.";
                     }
                 }
             }
         }
-    } 
+    }
     /* END COMMON FUNCTIONS */
 
 
 
     /* START TEST FUNCTION */
-    function test($data) {
+    function test($data)
+    {
         /* $device = $this->getDeviceData(1);
         $employee = $this->getEmployeeData(1);
         if(@$device != "") {
@@ -626,24 +629,24 @@ class Service extends MY_Controller
 
         die;
         $ID = 43;
-        
+
         $device = $this->getDeviceData(1);
         $employee = $this->getEmployeeData(1);
 
-        if($device != "") {
+        if ($device != "") {
             $_result_quotation = $this->master_model->getQueryResult("call usp_A_GetQuotationByID('" .
                 $ID . "'
             )");
-            if(isset($_result_quotation[0]->QuotationID)) {
+            if (isset($_result_quotation[0]->QuotationID)) {
                 $_result_sites = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                     $_result_quotation[0]->SitesID . "'
                 )");
-                if(isset($_result_sites[0]->SitesID)) {
-                    echo $employee." has added a new Quotation of the ".$_result_sites[0]->SiteName.", Quotation No: ".$_result_quotation[0]->EstimateNo." on ".$_result_quotation[0]->EstimateDate."";
+                if (isset($_result_sites[0]->SitesID)) {
+                    echo $employee . " has added a new Quotation of the " . $_result_sites[0]->SiteName . ", Quotation No: " . $_result_quotation[0]->EstimateNo . " on " . $_result_quotation[0]->EstimateDate . "";
                     die;
                     $pushNotificationArr = array(
                         'device_id' => $device,
-                        'message' => $employee." has added a new Quotation of the , Quotation No: 998 on ".date('d-m-Y')."",
+                        'message' => $employee . " has added a new Quotation of the , Quotation No: 998 on " . date('d-m-Y') . "",
                         'title' => label('api_msg_notification_addquotation_title'),
                         'event' => NOTIFICATION_ADDQUOTATION,
                         'ActionType' => '',
@@ -653,8 +656,8 @@ class Service extends MY_Controller
                 }
             }
         }
-        
-        
+
+
         /* $res = $this->master_model->getQueryResult("call usp_A_GetProductByChallanItemID('62')");
         if(!isset($res[0]->Message)) {
             $service = $res[0]->Service;
@@ -693,7 +696,7 @@ class Service extends MY_Controller
                 1 . "'
             )");
         } */
-        
+
         /* $start = "9";
         $end = "18";
         
@@ -710,7 +713,7 @@ class Service extends MY_Controller
             );
         }
         pr($timeslot); */
-        
+
 
         die;
         ob_start();
@@ -755,7 +758,7 @@ class Service extends MY_Controller
                 $l['w_page'] = 'page';
             }
             $pdf->setLanguageArray($l);
-        } 
+        }
 
         // set font
         $pdf->SetFont('helvetica', '', 9);
@@ -916,15 +919,14 @@ class Service extends MY_Controller
             $path = FCPATH . $structure . $File;
         }
 
-        
+
         $pdf->Output($path, 'F');
         die;
-
-
     }
     /* END TEST FUNCTION */
 
-    function getChallanNew($data) {
+    function getChallanNew($data)
+    {
         try {
             $response = array();
 
@@ -936,14 +938,14 @@ class Service extends MY_Controller
                 $response['message'] = 'CurrentPage not found';
             } else {
 
-                $SitesID = (!isset($data->SitesID)||$data->SitesID==0)?'-1':$data->SitesID;
-                $VisitorID = (!isset($data->VisitorID)||$data->VisitorID==0)?'-1':$data->VisitorID;
-                $CustomerID = (!isset($data->CustomerID)||$data->CustomerID==0)?'-1':$data->CustomerID;
-                $ChallanID = (!isset($data->ChallanID)||$data->ChallanID==0)?'-1':$data->ChallanID;
-                $Status = (!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
-                $QuotationID = (!isset($data->QuotationID)||$data->QuotationID==0)?'-1':$data->QuotationID;
-                
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+                $SitesID = (!isset($data->SitesID) || $data->SitesID == 0) ? '-1' : $data->SitesID;
+                $VisitorID = (!isset($data->VisitorID) || $data->VisitorID == 0) ? '-1' : $data->VisitorID;
+                $CustomerID = (!isset($data->CustomerID) || $data->CustomerID == 0) ? '-1' : $data->CustomerID;
+                $ChallanID = (!isset($data->ChallanID) || $data->ChallanID == 0) ? '-1' : $data->ChallanID;
+                $Status = (!isset($data->Status) || $data->Status == 0) ? '-1' : $data->Status;
+                $QuotationID = (!isset($data->QuotationID) || $data->QuotationID == 0) ? '-1' : $data->QuotationID;
+
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 $_result = $this->master_model->getQueryResult("call usp_A_GetChallanByStatus('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -960,10 +962,10 @@ class Service extends MY_Controller
                         $_result[$key]->Item['Material'] = $this->master_model->getQueryResult("call usp_A_GetChallanItemByQuotation('-1',1,'" . $QuotationID . "','" . $value->ChallanID . "',-1,1,0)");
                         $_result[$key]->Item['Product'] = $this->master_model->getQueryResult("call usp_A_GetChallanItemByQuotation('-1',1,'" . $QuotationID . "','" . $value->ChallanID . "',-1,0,0)");
 
-                        foreach($_result[$key]->Item['Product'] as $product_key=>$product) {
-                            if(isset($product->ChallanItemID)) {
+                        foreach ($_result[$key]->Item['Product'] as $product_key => $product) {
+                            if (isset($product->ChallanItemID)) {
                                 $sql = "call usp_A_GetInstallationItem(
-                                    '-1','1','-1','".$product->ChallanItemID."','-1','-1','-1','-1','-1'
+                                    '-1','1','-1','" . $product->ChallanItemID . "','-1','-1','-1','-1','-1'
                                 )";
                                 $_invoice_result = $this->master_model->getQueryResult($sql);
                                 if (isset($_invoice_result) && !empty($_invoice_result) && !isset($_invoice_result['0']->Message)) {
@@ -983,13 +985,13 @@ class Service extends MY_Controller
                     $Material = $this->master_model->getQueryResult("call usp_A_GetChallanItemByQuotation('-1',1,'" . $QuotationID . "','-1',-1,1,0)");
                     $Product = $this->master_model->getQueryResult("call usp_A_GetChallanItemByQuotation('-1',1,'" . $QuotationID . "','-1',-1,0,0)");
 
-                    $response['Material'] = isset($Material[0]->Message)?array():$Material;
-                    $response['Product'] = isset($Product[0]->Message)?array():$Product;
+                    $response['Material'] = isset($Material[0]->Message) ? array() : $Material;
+                    $response['Product'] = isset($Product[0]->Message) ? array() : $Product;
                     $response['rowcount'] = (int)$_result['0']->rowcount;
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -1029,7 +1031,7 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'Qoutation Status not found';
             } else {
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 $_result = $this->master_model->getQueryResult("call usp_A_GetQuotationByStatus('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -1038,7 +1040,7 @@ class Service extends MY_Controller
                     $data->CustomerID . "','" .
                     $data->QoutationStatus . "','" .
                     $CityID . "'
-                )"); 
+                )");
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     foreach ($_result as $key => $value) {
                         $sql = "call usp_A_GetChallanItemByQuotation('-1',1,'" . $value->QuotationID . "','-1',1,'1','-1')";
@@ -1069,7 +1071,8 @@ class Service extends MY_Controller
         }
     }
 
-    function getProductService($data) {
+    function getProductService($data)
+    {
         try {
             $response = array();
 
@@ -1080,13 +1083,13 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'CurrentPage not found';
             } else {
-                $SitesID = '-1';//(!isset($data->SitesID)||$data->SitesID==0)?'-1':$data->SitesID;
-                $VisitorID = (!isset($data->VisitorID)||$data->VisitorID==0)?'-1':$data->VisitorID;
-                $CustomerID = '-1';//(!isset($data->CustomerID)||$data->CustomerID==0)?'-1':$data->CustomerID;
-                $ChallanID = (!isset($data->ChallanID)||$data->ChallanID==0)?'-1':$data->ChallanID;
-                $Status = '-1';//(!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
-                $QuotationID = '-1';//(!isset($data->QuotationID)||$data->QuotationID==0)?'-1':$data->QuotationID;
-                $CityID = '-1';//isset($data->CityID) ? $data->CityID :'-1';
+                $SitesID = '-1'; //(!isset($data->SitesID)||$data->SitesID==0)?'-1':$data->SitesID;
+                $VisitorID = (!isset($data->VisitorID) || $data->VisitorID == 0) ? '-1' : $data->VisitorID;
+                $CustomerID = '-1'; //(!isset($data->CustomerID)||$data->CustomerID==0)?'-1':$data->CustomerID;
+                $ChallanID = (!isset($data->ChallanID) || $data->ChallanID == 0) ? '-1' : $data->ChallanID;
+                $Status = '-1'; //(!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
+                $QuotationID = '-1'; //(!isset($data->QuotationID)||$data->QuotationID==0)?'-1':$data->QuotationID;
+                $CityID = '-1'; //isset($data->CityID) ? $data->CityID :'-1';
 
                 $_result = $this->master_model->getQueryResult("call usp_A_GetChallanByStatus('" .
                     $data->PageSize . "','" .
@@ -1100,17 +1103,17 @@ class Service extends MY_Controller
                 )");
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    $ServiceID = (!isset($data->ServiceID)||$data->ServiceID==0)?'-1':$data->ServiceID;
-                    $InstallationID = (!isset($data->InstallationID)||$data->InstallationID==0)?'-1':$data->InstallationID;
-                    $ChallanItemID = (!isset($data->ChallanItemID)||$data->ChallanItemID==0)?'-1':$data->ChallanItemID;
-                    $VisitorID = "-1";//!isset($data->VisitorID)?'-1':$data->VisitorID;
+                    $ServiceID = (!isset($data->ServiceID) || $data->ServiceID == 0) ? '-1' : $data->ServiceID;
+                    $InstallationID = (!isset($data->InstallationID) || $data->InstallationID == 0) ? '-1' : $data->InstallationID;
+                    $ChallanItemID = (!isset($data->ChallanItemID) || $data->ChallanItemID == 0) ? '-1' : $data->ChallanItemID;
+                    $VisitorID = "-1"; //!isset($data->VisitorID)?'-1':$data->VisitorID;
                     $sql = "call usp_A_GetProductService('-1', '1','" .
                         $ServiceID . "','" .
                         $InstallationID . "','" .
                         $ChallanItemID . "','" .
-                        $ChallanID . "', '".
+                        $ChallanID . "', '" .
                         $VisitorID . "'
-                    )"; 
+                    )";
                     $_result[0]->Product = $this->master_model->getQueryResult($sql);
 
                     $response['error'] = 200;
@@ -1120,13 +1123,13 @@ class Service extends MY_Controller
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
                     $response['error'] = 104;
                     $response['message'] = label('api_msg_error_occurred');
-                } 
+                }
             }
             return $response;
         } catch (Exception $e) {
@@ -1135,7 +1138,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function getWarranty($data) {
+    function getWarranty($data)
+    {
         try {
             $response = array();
 
@@ -1146,13 +1150,13 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'CurrentPage not found';
             } else {
-                $SitesID = '-1';//(!isset($data->SitesID)||$data->SitesID==0)?'-1':$data->SitesID;
-                $VisitorID = '-1';//(!isset($data->VisitorID)||$data->VisitorID==0)?'-1':$data->VisitorID;
-                $CustomerID = '-1';//(!isset($data->CustomerID)||$data->CustomerID==0)?'-1':$data->CustomerID;
-                $ChallanID = (!isset($data->ChallanID)||$data->ChallanID==0)?'-1':$data->ChallanID;
-                $Status = '-1';//(!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
-                $QuotationID = '-1';//(!isset($data->QuotationID)||$data->QuotationID==0)?'-1':$data->QuotationID;
-                $CityID = '-1';//isset($data->CityID) ? $data->CityID :'-1';
+                $SitesID = '-1'; //(!isset($data->SitesID)||$data->SitesID==0)?'-1':$data->SitesID;
+                $VisitorID = '-1'; //(!isset($data->VisitorID)||$data->VisitorID==0)?'-1':$data->VisitorID;
+                $CustomerID = '-1'; //(!isset($data->CustomerID)||$data->CustomerID==0)?'-1':$data->CustomerID;
+                $ChallanID = (!isset($data->ChallanID) || $data->ChallanID == 0) ? '-1' : $data->ChallanID;
+                $Status = '-1'; //(!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
+                $QuotationID = '-1'; //(!isset($data->QuotationID)||$data->QuotationID==0)?'-1':$data->QuotationID;
+                $CityID = '-1'; //isset($data->CityID) ? $data->CityID :'-1';
 
                 $_result = $this->master_model->getQueryResult("call usp_A_GetChallanByStatus('" .
                     $data->PageSize . "','" .
@@ -1167,9 +1171,9 @@ class Service extends MY_Controller
                 )");
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    $WarrantyID = (!isset($data->WarrantyID)||$data->WarrantyID==0)?'-1':$data->WarrantyID;
-                    $InstallationID = (!isset($data->InstallationID)||$data->InstallationID==0)?'-1':$data->InstallationID;
-                    $ChallanItemID = (!isset($data->ChallanItemID)||$data->ChallanItemID==0)?'-1':$data->ChallanItemID;
+                    $WarrantyID = (!isset($data->WarrantyID) || $data->WarrantyID == 0) ? '-1' : $data->WarrantyID;
+                    $InstallationID = (!isset($data->InstallationID) || $data->InstallationID == 0) ? '-1' : $data->InstallationID;
+                    $ChallanItemID = (!isset($data->ChallanItemID) || $data->ChallanItemID == 0) ? '-1' : $data->ChallanItemID;
                     $sql = "call usp_A_GetWarranty('-1', '1','" .
                         $WarrantyID . "','" .
                         $InstallationID . "','" .
@@ -1186,7 +1190,7 @@ class Service extends MY_Controller
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -1201,7 +1205,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function printService($data) {
+    function printService($data)
+    {
         ob_start();
         require_once BASEPATH . "tcpdf/tcpdf.php";
         // create new PDF document
@@ -1244,7 +1249,7 @@ class Service extends MY_Controller
                 $l['w_page'] = 'page';
             }
             $pdf->setLanguageArray($l);
-        } 
+        }
 
         // set font
         $pdf->SetFont('helvetica', '', 9);
@@ -1510,12 +1515,12 @@ class Service extends MY_Controller
             $path = FCPATH . $structure . $File;
         }
 
-        
+
         $pdf->Output($path, 'F');
         die;
-
     }
-    function getTimeSlot($data) {
+    function getTimeSlot($data)
+    {
         try {
             $response = array();
             if (!isset($data->CurrentDate)  || $data->CurrentDate == '') {
@@ -1525,9 +1530,9 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'CurrentTime not found';
             } else {
-                if(strtotime($data->CurrentDate) < strtotime(date('d-m-Y'))) {
+                if (strtotime($data->CurrentDate) < strtotime(date('d-m-Y'))) {
                     $_result = [];
-                } else if(strtotime($data->CurrentDate) == strtotime(date('d-m-Y'))) {
+                } else if (strtotime($data->CurrentDate) == strtotime(date('d-m-Y'))) {
                     $_result = $this->SplitTime("09:00", "18:00", '60', $data->CurrentTime);
                 } else {
                     $_result = $this->SplitTime("09:00", "18:00", '60', "00:00:00");
@@ -1544,10 +1549,11 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function addAppointment($data) {
+    function addAppointment($data)
+    {
         try {
             $response = array();
- 
+
             if (!isset($data->UserID)  || $data->UserID == '') {
                 $response['error'] = 102;
                 $response['message'] = 'UserID not found';
@@ -1560,28 +1566,28 @@ class Service extends MY_Controller
             } else if (!isset($data->SiteID)  || $data->SiteID == '') {
                 $response['error'] = 102;
                 $response['message'] = 'SiteID not found';
-            } else if (!isset($data->AppointmentStatus)  || !in_array($data->AppointmentStatus, array('New','Assigned','InProgress','Completed','Closed','Rejected'))) {
+            } else if (!isset($data->AppointmentStatus)  || !in_array($data->AppointmentStatus, array('New', 'Assigned', 'InProgress', 'Completed', 'Closed', 'Rejected'))) {
                 $response['error'] = 102;
                 $response['message'] = 'AppointmentStatus not found';
             } else if (!isset($data->StartDate)  || $data->StartDate == '') {
                 $response['error'] = 102;
                 $response['message'] = 'StartDate not found';
-            }  else if (!isset($data->TimeSlot)  || $data->TimeSlot == '') {
+            } else if (!isset($data->TimeSlot)  || $data->TimeSlot == '') {
                 $response['error'] = 102;
                 $response['message'] = 'TimeSlot not found';
-            }  else if (!isset($data->Reason) ) {
+            } else if (!isset($data->Reason)) {
                 $response['error'] = 102;
                 $response['message'] = 'Reason not found';
             } else if (!isset($data->ActiveStatus) || $data->ActiveStatus == '') {
                 $response['error'] = 102;
                 $response['message'] = 'ActiveStatus not found';
             } else {
-                
+
                 $IP = GetIP();
                 $EndDate = $data->StartDate;
                 $times = explode('-', $data->TimeSlot);
                 $sql = "call usp_A_AddAppointment('" .
-                    $data->UserID . "','1','Android','" .$IP . "','" .
+                    $data->UserID . "','1','Android','" . $IP . "','" .
                     $data->VisitorID . "','" .
                     $data->ServiceID . "','" .
                     $data->SiteID . "','" .
@@ -1603,7 +1609,7 @@ class Service extends MY_Controller
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -1618,7 +1624,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function getAppointment($data) {
+    function getAppointment($data)
+    {
         try {
             $response = array();
             if (!isset($data->PageSize)  || $data->PageSize == '') {
@@ -1646,13 +1653,13 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'AppointmentStatus not found';
             } else {
-                $StartDate = !isset($data->StartDate)||$data->StartDate==''?'1990-01-01':$data->StartDate;
-                $EndDate = !isset($data->EndDate)||$data->StartDate==''?date('2999-m-d'):$data->EndDate;
-                
-                $Name = !isset($data->Name)?'':$data->Name;
-                $MobileNo = !isset($data->MobileNo)?'':$data->MobileNo;
-                $AppointmentNo = !isset($data->AppointmentNo)?'':$data->AppointmentNo;
-                $FilterType = !isset($data->FilterType)?'':$data->FilterType;
+                $StartDate = !isset($data->StartDate) || $data->StartDate == '' ? '1990-01-01' : $data->StartDate;
+                $EndDate = !isset($data->EndDate) || $data->StartDate == '' ? date('2999-m-d') : $data->EndDate;
+
+                $Name = !isset($data->Name) ? '' : $data->Name;
+                $MobileNo = !isset($data->MobileNo) ? '' : $data->MobileNo;
+                $AppointmentNo = !isset($data->AppointmentNo) ? '' : $data->AppointmentNo;
+                $FilterType = !isset($data->FilterType) ? '' : $data->FilterType;
                 $sql = "call usp_A_GetAppointment('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -1669,9 +1676,9 @@ class Service extends MY_Controller
                     @$MobileNo . "','" .
                     @$AppointmentNo . "','" .
                     @$FilterType . "' 
-                )"; 
+                )";
                 $_result = $this->master_model->getQueryResult($sql);
-                
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
 
                     foreach ($_result as $key => $value) {
@@ -1695,19 +1702,19 @@ class Service extends MY_Controller
                         )";
                         $_invoice_result = $this->master_model->getQueryResult($sql);
                         $installation_data = array();
-                        if(!isset($_invoice_result[0]->Message)) {
-                            foreach($_invoice_result as $item) {
-                                foreach(@$item as $service=>$value) {
+                        if (!isset($_invoice_result[0]->Message)) {
+                            foreach ($_invoice_result as $item) {
+                                foreach (@$item as $service => $value) {
                                     //if($item->InstallationService != "") { 
-                                        $installation_data[$key][$service] = array('Title' => $service, 'Qty' => 1, 'Price' => $value);
-                                        //$installation_data[] = $item;//array('Title' => $item->InstallationService, 'Qty' => $item->Qty, 'Price' => $item->Qty*$item->Rate);
+                                    $installation_data[$key][$service] = array('Title' => $service, 'Qty' => 1, 'Price' => $value);
+                                    //$installation_data[] = $item;//array('Title' => $item->InstallationService, 'Qty' => $item->Qty, 'Price' => $item->Qty*$item->Rate);
                                     //}
                                 }
-                            } 
+                            }
                         }
                         $_result[$key]->invoice = $installation_data[$key];
-                            
-                         
+
+
                         $sql = "call usp_A_GetAppointmentUsers('" .
                             -1 . "','" .
                             1 . "','" .
@@ -1718,23 +1725,22 @@ class Service extends MY_Controller
                             $_result[$key]->AppointmentID . "'
                         )";
                         $item = $this->master_model->getQueryResult($sql);
-                        
-                        if(isset($item[0]->Message))
+
+                        if (isset($item[0]->Message))
                             $_result[$key]->Users = array();
                         else
                             $_result[$key]->Users = $item;
-                        
                     }
-                    
+
 
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_appointment_listed_successfully');
                     $response['data'] = $_result;
-                    $response['rowcount'] = (int)$_result['0']->rowcount; 
+                    $response['rowcount'] = (int)$_result['0']->rowcount;
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -1748,8 +1754,9 @@ class Service extends MY_Controller
             $response['message'] = label('api_msg_something_went_wrong');
             return $response;
         }
-    } 
-    function changeAppointmentStatus($data) {
+    }
+    function changeAppointmentStatus($data)
+    {
         try {
             $response = array();
             if (!isset($data->AppointmentID)  || $data->AppointmentID == '') {
@@ -1758,7 +1765,7 @@ class Service extends MY_Controller
             } else if (!isset($data->UserID)  || $data->UserID == '') {
                 $response['error'] = 102;
                 $response['message'] = 'UserID not found';
-            }else if (!isset($data->AppointmentStatus)  || $data->AppointmentStatus == '') {
+            } else if (!isset($data->AppointmentStatus)  || $data->AppointmentStatus == '') {
                 $response['error'] = 102;
                 $response['message'] = 'AppointmentStatus not found';
             } else {
@@ -1779,7 +1786,7 @@ class Service extends MY_Controller
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -1794,7 +1801,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function addInstallationQuotation($data) {
+    function addInstallationQuotation($data)
+    {
         try {
             $response = array();
 
@@ -1874,14 +1882,14 @@ class Service extends MY_Controller
                 }
                 $data->Rounding = round($data->Rounding, 2);
                 $data->Total = $Total;
- 
+
                 // $this->load->helper('string');
                 // $data->OTP = random_string('numeric', 4);
                 $digits = 4;
-                $data->OTP = rand(pow(10, $digits-1), pow(10, $digits)-1);
+                $data->OTP = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
                 // $data->StartDate = GetDateInFormat($data->StartDate, DATE_FORMAT, DATABASE_DATE_FORMAT);
                 // $data->EndDate = GetDateInFormat($data->EndDate, DATE_FORMAT, DATABASE_DATE_FORMAT);
-                
+
                 $sql = "call usp_A_AddQuotation('" .
                     $data->SitesID . "','" .
                     $data->UserID . "','1','Android','" .
@@ -1898,7 +1906,7 @@ class Service extends MY_Controller
                     $data->SGST . "','" .
                     $data->IGST . "','" .
                     $data->Rounding . "','" .
-                    $WRTotal . "','" .//$data->Total . "','" .
+                    $WRTotal . "','" . //$data->Total . "','" .
                     $data->ServiceID . "','" .
                     $data->VisitorID . "','" .
                     $data->CustomerID . "','" .
@@ -1908,17 +1916,17 @@ class Service extends MY_Controller
                     $data->StartDate . "','" .
                     $data->EndDate . "','" .
                     'Installation' . "','" .
-                    $data->OTP. "','" .
+                    $data->OTP . "','" .
                     $data->AppointmentID . "'
                 )";
                 $_result = $this->master_model->getQueryResult($sql);
-                
+
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     //$EmployeeData =  $this->master_model->getQueryResult("call usp_A_GetDeviceInfoByID('" . $data->UserID . "')");
                     $device = $this->getDeviceData($data->UserID);
                     $employee = $this->getEmployeeData($data->UserID);
-                    if(@$device != "") {
+                    if (@$device != "") {
                         $notif_text = $this->getQuotationMessage($_result[0]->ID, $data->UserID);
                         $pushNotificationArr = array(
                             'device_id' => $device,
@@ -1950,8 +1958,8 @@ class Service extends MY_Controller
 
                     $this->PrintReceipt($_result['0']->ID);
 
-                    
-                    
+
+
                     $_result_quotation = $this->master_model->getQueryResult("call usp_A_GetQuotationByID('" .
                         $_result[0]->ID . "'
                     )");
@@ -1965,14 +1973,14 @@ class Service extends MY_Controller
                             $date = $_result_quotation[0]->EstimateDate;
                             $amount = $_result_quotation[0]->Total;
                             $otp = $_result_quotation[0]->OTP;
-                            
+
                             // $msg = "Dear ".$name."\nEstimation No: ".$estimation_no."\nDate:".$date."\nAmount: Rs. ".$amount."\nJust to accept this, pass this OTP:".$otp." to engineers.\nHH Enterprise";
                             $Content = $this->master_model->get_smstemplate(3);
-                            $msg = str_replace(array('{name}','{estimation_no}','{date}','{amount}','{OTP}'), array($name, $estimation_no, $date, $amount, $otp), $Content['SmsMessage']);
+                            $msg = str_replace(array('{name}', '{estimation_no}', '{date}', '{amount}', '{OTP}'), array($name, $estimation_no, $date, $amount, $otp), $Content['SmsMessage']);
 
                             $_result[0]->OTP = $otp;
                             $response['error'] = 200;
-                            $response['message'] = $msg;//label('api_msg_quotation_listed_successfully');
+                            $response['message'] = $msg; //label('api_msg_quotation_listed_successfully');
                             $response['data'] = $_result; //array(array('QuotationID' => $_result[0]->QuotationID,'OTP' => $_result[0]->OTP));
                         } else if (isset($_result_visitor['0']->Message) && $_result_visitor['0']->Message != "") {
                             $msg = explode('~', $_result[0]->Message);
@@ -2006,9 +2014,10 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    /* ------------------------- */    
+    /* ------------------------- */
 
-    function printWarrantyService($data) {
+    function printWarrantyService($data)
+    {
         ob_start();
         require_once BASEPATH . "tcpdf/tcpdf.php";
         // create new PDF document
@@ -2051,7 +2060,7 @@ class Service extends MY_Controller
                 $l['w_page'] = 'page';
             }
             $pdf->setLanguageArray($l);
-        } 
+        }
 
         // set font
         $pdf->SetFont('helvetica', '', 9);
@@ -2212,11 +2221,12 @@ class Service extends MY_Controller
             $path = FCPATH . $structure . $File;
         }
 
-        
+
         $pdf->Output($path, 'F');
         die;
     }
-    function getProducts($data) {
+    function getProducts($data)
+    {
         try {
             $response = array();
 
@@ -2230,10 +2240,10 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'BrandID not found';
             } else {
-                $ProductName = !isset($data->ProductName)?'':$data->ProductName;
-                $DisplayName = !isset($data->DisplayName)?'':$data->DisplayName;
-                $Model = !isset($data->Model)?'':$data->Model;
-                $Status = (!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
+                $ProductName = !isset($data->ProductName) ? '' : $data->ProductName;
+                $DisplayName = !isset($data->DisplayName) ? '' : $data->DisplayName;
+                $Model = !isset($data->Model) ? '' : $data->Model;
+                $Status = (!isset($data->Status) || $data->Status == 0) ? '-1' : $data->Status;
                 $sql = "call usp_A_GetProduct('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -2253,7 +2263,7 @@ class Service extends MY_Controller
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -2268,7 +2278,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function getBrands($data) {
+    function getBrands($data)
+    {
         try {
             $response = array();
 
@@ -2279,8 +2290,8 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'CurrentPage not found';
             } else {
-                $BrandName = !isset($data->BrandName)?'':$data->BrandName;
-                $Status = (!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
+                $BrandName = !isset($data->BrandName) ? '' : $data->BrandName;
+                $Status = (!isset($data->Status) || $data->Status == 0) ? '-1' : $data->Status;
                 $sql = "call usp_A_GetBrand('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -2297,7 +2308,7 @@ class Service extends MY_Controller
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -2312,7 +2323,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function getMaterial($data) {
+    function getMaterial($data)
+    {
         try {
             $response = array();
 
@@ -2323,8 +2335,8 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'CurrentPage not found';
             } else {
-                $Material = !isset($data->Material)?'':$data->Material;
-                $Status = (!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
+                $Material = !isset($data->Material) ? '' : $data->Material;
+                $Status = (!isset($data->Status) || $data->Status == 0) ? '-1' : $data->Status;
                 $sql = "call usp_A_GetMaterial('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -2341,7 +2353,7 @@ class Service extends MY_Controller
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -2356,7 +2368,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function getChallan($data) {
+    function getChallan($data)
+    {
         try {
             $response = array();
 
@@ -2368,15 +2381,15 @@ class Service extends MY_Controller
                 $response['message'] = 'CurrentPage not found';
             } else {
 
-                $SitesID = (!isset($data->SitesID)||$data->SitesID==0)?'-1':$data->SitesID;
-                $VisitorID = (!isset($data->VisitorID)||$data->VisitorID==0)?'-1':$data->VisitorID;
-                $CustomerID = (!isset($data->CustomerID)||$data->CustomerID==0)?'-1':$data->CustomerID;
-                $ChallanID = (!isset($data->ChallanID)||$data->ChallanID==0)?'-1':$data->ChallanID;
-                $Status = (!isset($data->Status)||$data->Status==0)?'-1':$data->Status;
-                $QuotationID = (!isset($data->QuotationID)||$data->QuotationID==0)?'-1':$data->QuotationID;
-                
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
-                $HasChallan = isset($data->HasChallan) ? $data->HasChallan :'-1';
+                $SitesID = (!isset($data->SitesID) || $data->SitesID == 0) ? '-1' : $data->SitesID;
+                $VisitorID = (!isset($data->VisitorID) || $data->VisitorID == 0) ? '-1' : $data->VisitorID;
+                $CustomerID = (!isset($data->CustomerID) || $data->CustomerID == 0) ? '-1' : $data->CustomerID;
+                $ChallanID = (!isset($data->ChallanID) || $data->ChallanID == 0) ? '-1' : $data->ChallanID;
+                $Status = (!isset($data->Status) || $data->Status == 0) ? '-1' : $data->Status;
+                $QuotationID = (!isset($data->QuotationID) || $data->QuotationID == 0) ? '-1' : $data->QuotationID;
+
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
+                $HasChallan = isset($data->HasChallan) ? $data->HasChallan : '-1';
                 $sql = "call usp_A_GetChallanByStatus('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -2389,17 +2402,17 @@ class Service extends MY_Controller
                     $QuotationID . "','" .
                     $HasChallan . "'
                 )";
-                $_result = $this->master_model->getQueryResult($sql); 
+                $_result = $this->master_model->getQueryResult($sql);
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     foreach ($_result as $key => $value) {
-                        $HasChallan = isset($data->HasChallan) ? $data->HasChallan :'-1';
-                        $_result[$key]->Item['Material'] = $this->master_model->getQueryResult("call usp_A_GetChallanitem('-1',1,'" . $value->ChallanID . "',1,'1','".$HasChallan."')");
-                        $_result[$key]->Item['Product'] = $this->master_model->getQueryResult("call usp_A_GetChallanitem('-1',1,'" . $value->ChallanID . "',1,'0','".$HasChallan."')");
+                        $HasChallan = isset($data->HasChallan) ? $data->HasChallan : '-1';
+                        $_result[$key]->Item['Material'] = $this->master_model->getQueryResult("call usp_A_GetChallanitem('-1',1,'" . $value->ChallanID . "',1,'1','" . $HasChallan . "')");
+                        $_result[$key]->Item['Product'] = $this->master_model->getQueryResult("call usp_A_GetChallanitem('-1',1,'" . $value->ChallanID . "',1,'0','" . $HasChallan . "')");
 
-                        foreach($_result[$key]->Item['Product'] as $product_key=>$product) {
-                            if(isset($product->ChallanItemID)) {
+                        foreach ($_result[$key]->Item['Product'] as $product_key => $product) {
+                            if (isset($product->ChallanItemID)) {
                                 $sql = "call usp_A_GetInstallationItem(
-                                    '-1','1','-1','".$product->ChallanItemID."','-1','-1','-1','-1','-1'
+                                    '-1','1','-1','" . $product->ChallanItemID . "','-1','-1','-1','-1','-1'
                                 )";
                                 // $sql = "call usp_A_GetAppointmentInstallationTotal('" .
                                 //     $_result[$key]->AppointmentID . "', '".$product->ChallanItemID."'
@@ -2415,7 +2428,7 @@ class Service extends MY_Controller
                                             //}
                                         }
                                     } 
-                                } */ 
+                                } */
                                 if (isset($_invoice_result) && !empty($_invoice_result) && !isset($_invoice_result['0']->Message)) {
                                     $_result[$key]->Item['Product'][$product_key]->installation = $_invoice_result;
                                 } else {
@@ -2424,8 +2437,8 @@ class Service extends MY_Controller
                                 //$_result[$key]->Item['Product'] = array_merge($_result[$key]->Item['Product'], $_invoice_result);
                             }
                         }
-                    }                    
-                        
+                    }
+
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_challan_listed_successfully');
                     $response['data'] = $_result;
@@ -2433,7 +2446,7 @@ class Service extends MY_Controller
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                     $response['rowcount'] = 0;
                 } else {
@@ -2448,7 +2461,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function addChallan($data) {
+    function addChallan($data)
+    {
         try {
             $response = array();
 
@@ -2461,10 +2475,10 @@ class Service extends MY_Controller
             } else {
 
                 $IP = GetIP();
-            
-                $_result_products = $this->master_model->getQueryResult("call usp_A_GetChallanItemByQuotation('-1',1,'" . $data->QuotationID . "','-1',-1,0,1)"); 
+
+                $_result_products = $this->master_model->getQueryResult("call usp_A_GetChallanItemByQuotation('-1',1,'" . $data->QuotationID . "','-1',-1,0,1)");
                 //if atleast one challan has been update after automatic creation
-                if(isset($_result_products[0]->ChallanItemID)) {
+                if (isset($_result_products[0]->ChallanItemID)) {
                     //add new challan now
                     $WRTotal = @$data->SubTotal + @$data->CGST + @$data->SGST + @$data->IGST;
                     $Total = round($WRTotal);
@@ -2478,7 +2492,7 @@ class Service extends MY_Controller
 
                     // $data->StartDate = GetDateInFormat($data->StartDate, DATE_FORMAT, DATABASE_DATE_FORMAT);
                     // $data->EndDate = GetDateInFormat($data->EndDate, DATE_FORMAT, DATABASE_DATE_FORMAT);
-                    $DeliveryCharge = (!isset($data->DeliveryCharge)||$data->DeliveryCharge=='')?'0':$data->DeliveryCharge;
+                    $DeliveryCharge = (!isset($data->DeliveryCharge) || $data->DeliveryCharge == '') ? '0' : $data->DeliveryCharge;
 
                     $sql = "call usp_A_AddChallan('" .
                         $data->QuotationID . "','" .
@@ -2499,7 +2513,7 @@ class Service extends MY_Controller
                         $DeliveryCharge . "','" .
                         str_replace('\n', '', $this->db->escape_str(nl2br($data->Terms))) . "','" .
                         str_replace('\n', '', $this->db->escape_str(nl2br($data->Notes))) . "'
-                    )"; 
+                    )";
                     $_result = $this->master_model->getQueryResult($sql);
 
                     if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
@@ -2508,7 +2522,7 @@ class Service extends MY_Controller
                         $this->configdata = $this->config_model->getConfig();
 
                         foreach ($data->Item as $key => $value) {
-                            for($i=1; $i<=$value->Qty; $i++) {
+                            for ($i = 1; $i <= $value->Qty; $i++) {
                                 $sql = "call usp_A_AddChallanItem('" .
                                     $_result['0']->ID . "','" .
                                     $data->UserID . "','1','Android','" .
@@ -2539,7 +2553,6 @@ class Service extends MY_Controller
                         $response['error'] = 104;
                         $response['message'] = label('api_msg_error_occurred');
                     }
-                    
                 } else {
                     //you are updating the challan for the first time, so update the first challan(you have challan id)
                     $WRTotal = @$data->SubTotal + @$data->CGST + @$data->SGST + @$data->IGST;
@@ -2551,14 +2564,14 @@ class Service extends MY_Controller
                     }
                     $data->Rounding = round($data->Rounding, 2);
                     $data->Total = $Total;
-    
+
                     // $data->StartDate = GetDateInFormat($data->StartDate, DATE_FORMAT, DATABASE_DATE_FORMAT);
                     // $data->EndDate = GetDateInFormat($data->EndDate, DATE_FORMAT, DATABASE_DATE_FORMAT);
-                    $DeliveryCharge = (!isset($data->DeliveryCharge)||$data->DeliveryCharge=='')?'0':$data->DeliveryCharge;
-    
+                    $DeliveryCharge = (!isset($data->DeliveryCharge) || $data->DeliveryCharge == '') ? '0' : $data->DeliveryCharge;
+
                     $sql = "call usp_A_EditChallan('" .
-                        $data->UserID . "','1','".
-                        $data->ChallanID. "', 'Android','" .
+                        $data->UserID . "','1','" .
+                        $data->ChallanID . "', 'Android','" .
                         $IP . "','" .
                         $data->QuotationID . "','" .
                         $data->ChallanDate . "','" .
@@ -2578,16 +2591,16 @@ class Service extends MY_Controller
                         str_replace('\n', '', $this->db->escape_str(nl2br($data->Notes))) . "'
                     )";
                     $_result = $this->master_model->getQueryResult($sql);
-    
+
                     if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-    
+
                         $this->load->model('admin/config_model');
                         $this->configdata = $this->config_model->getConfig();
-    
+
                         foreach ($data->Item as $key => $value) {
-                            for($i=1; $i<=$value->Qty; $i++) {
+                            for ($i = 1; $i <= $value->Qty; $i++) {
                                 $sql = "call usp_A_EditChallanItem('" .
-                                    $data->UserID . "','1','".
+                                    $data->UserID . "','1','" .
                                     $value->ChallanItemID . "','Android','" .
                                     $IP . "','" .
                                     $_result['0']->ID . "','" .
@@ -2603,9 +2616,9 @@ class Service extends MY_Controller
                                 $item_res = $this->master_model->getQueryResult($sql);
                             }
                         }
-    
+
                         $this->PrintChallan($_result['0']->ID);
-    
+
                         $response['error'] = 200;
                         $response['message'] = label('api_msg_challan_added_successfully');
                         $response['data'] = $_result;
@@ -2619,8 +2632,6 @@ class Service extends MY_Controller
                         $response['message'] = label('api_msg_error_occurred');
                     }
                 }
-
-
             }
             return $response;
         } catch (Exception $e) {
@@ -2628,10 +2639,11 @@ class Service extends MY_Controller
             $response['message'] = label('api_msg_something_went_wrong');
             return $response;
         }
-    } 
-    function addAcUnit($json) {
+    }
+    function addAcUnit($json)
+    {
         $data = (object)$json;
-        try { 
+        try {
             $response = array();
 
             if (!isset($data->UserID)  || $data->UserID == '') {
@@ -2666,42 +2678,42 @@ class Service extends MY_Controller
                     $value->SrNo . "','1'
                 )";
                 $_result = $this->master_model->getQueryResult($sql);
-    
-                if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    $ChallanItemID = (!isset($data->ChallanItemID)?"0":$data->ChallanItemID);
-                    $SiteID = (!isset($data->SiteID)?"0":$data->SiteID);
-                    $IndoorSrNo = (!isset($data->IndoorSrNo)?"":$data->IndoorSrNo);
-                    $OutdoorSrNo = (!isset($data->OutdoorSrNo)?"":$data->OutdoorSrNo);
-                    $InstallationType = (!isset($data->InstallationType)?"":$data->InstallationType);
-                    $CopperPiping = (!isset($data->CopperPiping)?"":$data->CopperPiping);
-                    $Cable = (!isset($data->Cable)?"":$data->Cable);
-                    $Drain = (!isset($data->Drain)?"":$data->Drain);
-                    $ZariWork = (!isset($data->ZariWork)?"":$data->ZariWork);
-                    $CoreCutting = (!isset($data->CoreCutting)?"":$data->CoreCutting);
-                    $StandType = (!isset($data->StandType)?"":$data->StandType);
-                    $UnitSetup = (!isset($data->UnitSetup)?"":$data->UnitSetup);
-                    
-                    $CopperPipingPayable = (!isset($data->CopperPipingPayable)?"0":$data->CopperPipingPayable);
-                    $CablePayable = (!isset($data->CablePayable)?"0":$data->CablePayable);
-                    $DrainPayable = (!isset($data->DrainPayable)?"0":$data->DrainPayable);
-                    $ZariWorkPayable = (!isset($data->ZariWorkPayable)?"0":$data->ZariWorkPayable);
-                    $CoreCuttingPayable = (!isset($data->CoreCuttingPayable)?"0":$data->CoreCuttingPayable);
-                    $StandTypePayable = (!isset($data->StandTypePayable)?"0":$data->StandTypePayable);
-                    
-                    
-                    $CopperPipingRemark = (!isset($data->CopperPipingRemark)?"":$data->CopperPipingRemark);
-                    $CableRemark = (!isset($data->CableRemark)?"":$data->CableRemark);
-                    $DrainRemark = (!isset($data->DrainRemark)?"":$data->DrainRemark);
-                    $ZariWorkRemark = (!isset($data->ZariWorkRemark)?"":$data->ZariWorkRemark);
-                    $CoreCuttingRemark = (!isset($data->CoreCuttingRemark)?"":$data->CoreCuttingRemark);
-                    $StandTypeRemark = (!isset($data->StandTypeRemark)?"":$data->StandTypeRemark);
-                    
-                    $Location = (!isset($data->Location)?"":$data->Location);
 
-                    $Remark = (!isset($data->Remark)?"":$data->Remark);
-                    $ImageIndoor = (!isset($data->ImageIndoor)?"":$data->ImageIndoor); 
-                    $ImageOutdoor = (!isset($data->ImageOutdoor)?"":$data->ImageOutdoor); 
-                    $Piping = (!isset($data->Piping)?"0":$data->Piping);
+                if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
+                    $ChallanItemID = (!isset($data->ChallanItemID) ? "0" : $data->ChallanItemID);
+                    $SiteID = (!isset($data->SiteID) ? "0" : $data->SiteID);
+                    $IndoorSrNo = (!isset($data->IndoorSrNo) ? "" : $data->IndoorSrNo);
+                    $OutdoorSrNo = (!isset($data->OutdoorSrNo) ? "" : $data->OutdoorSrNo);
+                    $InstallationType = (!isset($data->InstallationType) ? "" : $data->InstallationType);
+                    $CopperPiping = (!isset($data->CopperPiping) ? "" : $data->CopperPiping);
+                    $Cable = (!isset($data->Cable) ? "" : $data->Cable);
+                    $Drain = (!isset($data->Drain) ? "" : $data->Drain);
+                    $ZariWork = (!isset($data->ZariWork) ? "" : $data->ZariWork);
+                    $CoreCutting = (!isset($data->CoreCutting) ? "" : $data->CoreCutting);
+                    $StandType = (!isset($data->StandType) ? "" : $data->StandType);
+                    $UnitSetup = (!isset($data->UnitSetup) ? "" : $data->UnitSetup);
+
+                    $CopperPipingPayable = (!isset($data->CopperPipingPayable) ? "0" : $data->CopperPipingPayable);
+                    $CablePayable = (!isset($data->CablePayable) ? "0" : $data->CablePayable);
+                    $DrainPayable = (!isset($data->DrainPayable) ? "0" : $data->DrainPayable);
+                    $ZariWorkPayable = (!isset($data->ZariWorkPayable) ? "0" : $data->ZariWorkPayable);
+                    $CoreCuttingPayable = (!isset($data->CoreCuttingPayable) ? "0" : $data->CoreCuttingPayable);
+                    $StandTypePayable = (!isset($data->StandTypePayable) ? "0" : $data->StandTypePayable);
+
+
+                    $CopperPipingRemark = (!isset($data->CopperPipingRemark) ? "" : $data->CopperPipingRemark);
+                    $CableRemark = (!isset($data->CableRemark) ? "" : $data->CableRemark);
+                    $DrainRemark = (!isset($data->DrainRemark) ? "" : $data->DrainRemark);
+                    $ZariWorkRemark = (!isset($data->ZariWorkRemark) ? "" : $data->ZariWorkRemark);
+                    $CoreCuttingRemark = (!isset($data->CoreCuttingRemark) ? "" : $data->CoreCuttingRemark);
+                    $StandTypeRemark = (!isset($data->StandTypeRemark) ? "" : $data->StandTypeRemark);
+
+                    $Location = (!isset($data->Location) ? "" : $data->Location);
+
+                    $Remark = (!isset($data->Remark) ? "" : $data->Remark);
+                    $ImageIndoor = (!isset($data->ImageIndoor) ? "" : $data->ImageIndoor);
+                    $ImageOutdoor = (!isset($data->ImageOutdoor) ? "" : $data->ImageOutdoor);
+                    $Piping = (!isset($data->Piping) ? "0" : $data->Piping);
                     $installation_sql = "call usp_A_AddInstallation('" .
                         $ChallanItemID . "','" .
                         $SiteID . "','" .
@@ -2714,14 +2726,14 @@ class Service extends MY_Controller
                         $ZariWork . "','" .
                         $CoreCutting . "','" .
                         $StandType . "','" .
-                    
+
                         $CopperPipingPayable . "','" .
                         $CablePayable . "','" .
                         $DrainPayable . "','" .
                         $ZariWorkPayable . "','" .
                         $CoreCuttingPayable . "','" .
                         $StandTypePayable . "','" .
-                    
+
                         $CopperPipingRemark . "','" .
                         $CableRemark . "','" .
                         $DrainRemark . "','" .
@@ -2730,17 +2742,17 @@ class Service extends MY_Controller
                         $StandTypeRemark . "','" .
 
                         $this->db->escape_str($Remark) . "','" .
-                        $Location . "','" . 
+                        $Location . "','" .
                         $ImageIndoor . "','" .
                         $ImageOutdoor . "','" .
-                        
-                        $UnitSetup . "','" . 
+
+                        $UnitSetup . "','" .
                         $Piping . "','" .
 
                         $data->UserID . "','1','Android','" .
                         $IP . "'
                     )";
-                    
+
                     if (@$_FILES['IndoorImage']['error'] == 0 && !empty($_FILES['IndoorImage'])) {
                         $pathMain       = INSTALLATION_UPLOAD_PATH;
                         $path           = INSTALLATION_UPLOAD_PATH;
@@ -2768,7 +2780,7 @@ class Service extends MY_Controller
                         $response['error'] = 200;
                         $response['message'] = 'Indoor Image Updated';
                     }
-                     
+
                     if (@$_FILES['OutdoorImage']['error'] == 0 && !empty($_FILES['OutdoorImage'])) {
                         $pathMain       = INSTALLATION_UPLOAD_PATH;
                         $path           = INSTALLATION_UPLOAD_PATH;
@@ -2796,7 +2808,7 @@ class Service extends MY_Controller
                         $response['error'] = 200;
                         $response['message'] = 'Indoor Image Updated';
                     }
-                    
+
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_item_added_successfully');
                     $response['data'] = $_result;
@@ -2817,7 +2829,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function PrintChallan($ID) {
+    function PrintChallan($ID)
+    {
         $result = array();
 
         $Quotation = $this->master_model->getQueryResult("call usp_A_GetChallanByID('" . $ID . "')");
@@ -2868,7 +2881,7 @@ class Service extends MY_Controller
                 $l['w_page'] = 'page';
             }
             $pdf->setLanguageArray($l);
-        } 
+        }
 
         // ---------------------------------------------------------
 
@@ -2908,10 +2921,10 @@ class Service extends MY_Controller
                             <td>' . wordwrap($Company[0]->Address, 50, "<br/>") . '</td>
                         </tr>
                         <tr>
-                            <td>Contact No.: ' . $Company[0]->ContactNo . ', Email ID: ' . $Company[0]->EmailID.'</td>
+                            <td>Contact No.: ' . $Company[0]->ContactNo . ', Email ID: ' . $Company[0]->EmailID . '</td>
                         </tr>
                         <tr>
-                            <td>' . ($Company[0]->GSTNo!=""?("GSTIN :".$Company[0]->GSTNo):"") . '</td>
+                            <td>' . ($Company[0]->GSTNo != "" ? ("GSTIN :" . $Company[0]->GSTNo) : "") . '</td>
                         </tr>
                     </table>
                     <p style="text-align:center;"><b>OUTWARD CHALLAN</b></p>
@@ -2919,15 +2932,15 @@ class Service extends MY_Controller
                     <table border="1" style="border: 1px solid #aaa" cellpadding="8">
                         <tr>
                             <td>
-                                Challan Date: '.$Quotation[0]->ChallanDate.'<br>
+                                Challan Date: ' . $Quotation[0]->ChallanDate . '<br>
                                 ' . $Sites[0]->Name . '<br>
                                 ' . $Sites[0]->Address . ' ' . $Sites[0]->Address2 . '<br>
                                 ' . $Sites[0]->CityName . ' ' . $Sites[0]->StateName . '<br>
                                 ' . $Sites[0]->PinCode . '
                             </td>
                             <td>
-                            Challan No. :'.$Quotation[0]->ChallanNo.'<br>
-                            GSTIN :' . (($Sites[0]->GSTNo!='')?$Sites[0]->GSTNo:('')). '
+                            Challan No. :' . $Quotation[0]->ChallanNo . '<br>
+                            GSTIN :' . (($Sites[0]->GSTNo != '') ? $Sites[0]->GSTNo : ('')) . '
                             </td>
                         </tr>
                     </table>
@@ -2941,35 +2954,35 @@ class Service extends MY_Controller
                             <th width="70">SrNo</th>
                         </tr>';
 
-                        $item_counter = 0;
-                        if(!isset($Item_Product[0]->Message)) {
-                            foreach ($Item_Product as $key => $value) {
-                                $html .= '
+        $item_counter = 0;
+        if (!isset($Item_Product[0]->Message)) {
+            foreach ($Item_Product as $key => $value) {
+                $html .= '
                                 <tr>
                                     <td>' . (++$item_counter) . '</td>
                                     <td>' . $value->DisplayName . '<br/>' . $value->Model . '</td>
                                     <td>' . $value->Qty . '</td>
                                     <td>' . $value->SrNo . '</td>
                                 </tr>';
-                            }
-                        }
-                        if(!isset($Item_Material[0]->Message)) {
-                            foreach ($Item_Material as $key => $value) {
-                                $html .= '
+            }
+        }
+        if (!isset($Item_Material[0]->Message)) {
+            foreach ($Item_Material as $key => $value) {
+                $html .= '
                                     <tr>
                                         <td>' . (++$item_counter) . '</td>
                                         <td>' . $value->Material . '</td>
                                         <td>' . $value->Qty . '</td>
                                         <td></td>
                                     </tr>';
-                            }
-                        }
+            }
+        }
 
 
-                $html .= '
+        $html .= '
                         <tr>
                             <td colspan="3">
-                                Note: '.str_replace('\n', '<br>', $Quotation[0]->Note).'
+                                Note: ' . str_replace('\n', '<br>', $Quotation[0]->Note) . '
                             </td>
                         </tr>
                     </table>
@@ -2978,7 +2991,7 @@ class Service extends MY_Controller
                         <tr>
                             <td>
                                 TERMS OF SUPPLY<br>
-                                GSTIN :'. ($Company[0]->GSTNo!=""?$Company[0]->GSTNo:"").'<br>
+                                GSTIN :' . ($Company[0]->GSTNo != "" ? $Company[0]->GSTNo : "") . '<br>
                                 <label>SUBJECT TO AHMEDABAD</label><br>
                                 <label>JURIDICTION</label>
                             </td>
@@ -3026,17 +3039,18 @@ class Service extends MY_Controller
         $pdf->Output($path, 'F');
         return $path;
     }
-    function getInstallationType() {
+    function getInstallationType()
+    {
         try {
             $response = array();
             $types = array();
-            foreach(INSTALLATION_TYPE as $item) {
+            foreach (INSTALLATION_TYPE as $item) {
                 $types[]['Title'] = $item;
             }
             $response['error'] = 200;
             $response['message'] = label('api_msg_installation_type_listed_successfully');
             $response['data'] = $types;
-            
+
             return $response;
         } catch (Exception $e) {
             $response['error'] = 104;
@@ -3044,17 +3058,18 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function getPaymentType() {
+    function getPaymentType()
+    {
         try {
             $response = array();
             $types = array();
-            foreach(PAYMENT_TYPE as $item) {
+            foreach (PAYMENT_TYPE as $item) {
                 $types[]['Title'] = $item;
             }
             $response['error'] = 200;
             $response['message'] = label('api_msg_payment_type_listed_successfully');
             $response['data'] = $types;
-            
+
             return $response;
         } catch (Exception $e) {
             $response['error'] = 104;
@@ -3062,7 +3077,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function getInstallation($data) {
+    function getInstallation($data)
+    {
         try {
             $response = array();
 
@@ -3070,18 +3086,18 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'InstallationID not found';
             } else {
-                $InstallationID = !isset($data->InstallationID)?'0':$data->InstallationID;
-                $QuotationID = !isset($data->QuotationID)?'-1':$data->QuotationID;
-                $VisitorID = !isset($data->VisitorID)?'-1':$data->VisitorID;
-                $SiteID = !isset($data->SiteID)?'-1':$data->SiteID;
-                $AppointmentID = !isset($data->AppointmentID)?'-1':$data->AppointmentID;
-                
-                $PageSize = !isset($data->PageSize)?'-1':$data->PageSize;
-                $CurrentPage = !isset($data->CurrentPage)?'1':$data->CurrentPage;
+                $InstallationID = !isset($data->InstallationID) ? '0' : $data->InstallationID;
+                $QuotationID = !isset($data->QuotationID) ? '-1' : $data->QuotationID;
+                $VisitorID = !isset($data->VisitorID) ? '-1' : $data->VisitorID;
+                $SiteID = !isset($data->SiteID) ? '-1' : $data->SiteID;
+                $AppointmentID = !isset($data->AppointmentID) ? '-1' : $data->AppointmentID;
+
+                $PageSize = !isset($data->PageSize) ? '-1' : $data->PageSize;
+                $CurrentPage = !isset($data->CurrentPage) ? '1' : $data->CurrentPage;
                 $sql = "call usp_A_GetInstallationItem('" .
                     $PageSize . "','" .
                     $CurrentPage . "','" .
-                    $InstallationID . "','-1','-1','".$QuotationID."','".$VisitorID."','".$SiteID."','".$AppointmentID."'
+                    $InstallationID . "','-1','-1','" . $QuotationID . "','" . $VisitorID . "','" . $SiteID . "','" . $AppointmentID . "'
                 )";
                 $_result = $this->master_model->getQueryResult($sql);
 
@@ -3089,11 +3105,11 @@ class Service extends MY_Controller
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_installation_listed_successfully');
                     $response['data'] = $_result;
-                    $response['rowcount'] = (int)$_result['0']->rowcount; 
+                    $response['rowcount'] = (int)$_result['0']->rowcount;
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                    $response['message'] = isset($msg[1])?$msg[1]:label('api_msg_no_data');
+                    $response['message'] = isset($msg[1]) ? $msg[1] : label('api_msg_no_data');
                     $response['data'] = array();
                 } else {
                     $response['error'] = 104;
@@ -3107,7 +3123,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function addInstallation($data) {
+    function addInstallation($data)
+    {
         try {
             $response = array();
 
@@ -3131,41 +3148,41 @@ class Service extends MY_Controller
                 $response['message'] = 'SiteID not found';
             } else {
                 $IP = GetIP();
-                
-                $ChallanItemID = (!isset($data->ChallanItemID)?"0":$data->ChallanItemID);
-                $SiteID = (!isset($data->SiteID)?"0":$data->SiteID);
-                $IndoorSrNo = (!isset($data->IndoorSrNo)?"":$data->IndoorSrNo);
-                $OutdoorSrNo = (!isset($data->OutdoorSrNo)?"":$data->OutdoorSrNo);
-                $InstallationType = (!isset($data->InstallationType)?"":$data->InstallationType);
-                $CopperPiping = (!isset($data->CopperPiping)?"":$data->CopperPiping);
-                $Cable = (!isset($data->Cable)?"":$data->Cable);
-                $Drain = (!isset($data->Drain)?"":$data->Drain);
-                $ZariWork = (!isset($data->ZariWork)?"":$data->ZariWork);
-                $CoreCutting = (!isset($data->CoreCutting)?"":$data->CoreCutting);
-                $StandType = (!isset($data->StandType)?"":$data->StandType);
-                $UnitSetup = (!isset($data->UnitSetup)?"":$data->UnitSetup);
-                
-                $CopperPipingPayable = (!isset($data->CopperPipingPayable)?"0":$data->CopperPipingPayable);
-                $CablePayable = (!isset($data->CablePayable)?"0":$data->CablePayable);
-                $DrainPayable = (!isset($data->DrainPayable)?"0":$data->DrainPayable);
-                $ZariWorkPayable = (!isset($data->ZariWorkPayable)?"0":$data->ZariWorkPayable);
-                $CoreCuttingPayable = (!isset($data->CoreCuttingPayable)?"0":$data->CoreCuttingPayable);
-                $StandTypePayable = (!isset($data->StandTypePayable)?"0":$data->StandTypePayable);
-                
-                
-                $CopperPipingRemark = (!isset($data->CopperPipingRemark)?"":$data->CopperPipingRemark);
-                $CableRemark = (!isset($data->CableRemark)?"":$data->CableRemark);
-                $DrainRemark = (!isset($data->DrainRemark)?"":$data->DrainRemark);
-                $ZariWorkRemark = (!isset($data->ZariWorkRemark)?"":$data->ZariWorkRemark);
-                $CoreCuttingRemark = (!isset($data->CoreCuttingRemark)?"":$data->CoreCuttingRemark);
-                $StandTypeRemark = (!isset($data->StandTypeRemark)?"":$data->StandTypeRemark);
-                
-                
-                $Piping = (!isset($data->Piping)?"0":$data->Piping);
-                
-                $Location = (!isset($data->Location)?"":$data->Location);
 
-                $Remark = (!isset($data->Remark)?"":$data->Remark);
+                $ChallanItemID = (!isset($data->ChallanItemID) ? "0" : $data->ChallanItemID);
+                $SiteID = (!isset($data->SiteID) ? "0" : $data->SiteID);
+                $IndoorSrNo = (!isset($data->IndoorSrNo) ? "" : $data->IndoorSrNo);
+                $OutdoorSrNo = (!isset($data->OutdoorSrNo) ? "" : $data->OutdoorSrNo);
+                $InstallationType = (!isset($data->InstallationType) ? "" : $data->InstallationType);
+                $CopperPiping = (!isset($data->CopperPiping) ? "" : $data->CopperPiping);
+                $Cable = (!isset($data->Cable) ? "" : $data->Cable);
+                $Drain = (!isset($data->Drain) ? "" : $data->Drain);
+                $ZariWork = (!isset($data->ZariWork) ? "" : $data->ZariWork);
+                $CoreCutting = (!isset($data->CoreCutting) ? "" : $data->CoreCutting);
+                $StandType = (!isset($data->StandType) ? "" : $data->StandType);
+                $UnitSetup = (!isset($data->UnitSetup) ? "" : $data->UnitSetup);
+
+                $CopperPipingPayable = (!isset($data->CopperPipingPayable) ? "0" : $data->CopperPipingPayable);
+                $CablePayable = (!isset($data->CablePayable) ? "0" : $data->CablePayable);
+                $DrainPayable = (!isset($data->DrainPayable) ? "0" : $data->DrainPayable);
+                $ZariWorkPayable = (!isset($data->ZariWorkPayable) ? "0" : $data->ZariWorkPayable);
+                $CoreCuttingPayable = (!isset($data->CoreCuttingPayable) ? "0" : $data->CoreCuttingPayable);
+                $StandTypePayable = (!isset($data->StandTypePayable) ? "0" : $data->StandTypePayable);
+
+
+                $CopperPipingRemark = (!isset($data->CopperPipingRemark) ? "" : $data->CopperPipingRemark);
+                $CableRemark = (!isset($data->CableRemark) ? "" : $data->CableRemark);
+                $DrainRemark = (!isset($data->DrainRemark) ? "" : $data->DrainRemark);
+                $ZariWorkRemark = (!isset($data->ZariWorkRemark) ? "" : $data->ZariWorkRemark);
+                $CoreCuttingRemark = (!isset($data->CoreCuttingRemark) ? "" : $data->CoreCuttingRemark);
+                $StandTypeRemark = (!isset($data->StandTypeRemark) ? "" : $data->StandTypeRemark);
+
+
+                $Piping = (!isset($data->Piping) ? "0" : $data->Piping);
+
+                $Location = (!isset($data->Location) ? "" : $data->Location);
+
+                $Remark = (!isset($data->Remark) ? "" : $data->Remark);
                 $sql = "call usp_A_AddInstallation('" .
                     $ChallanItemID . "','" .
                     $SiteID . "','" .
@@ -3178,14 +3195,14 @@ class Service extends MY_Controller
                     $ZariWork . "','" .
                     $CoreCutting . "','" .
                     $StandType . "','" .
-                
+
                     $CopperPipingPayable . "','" .
                     $CablePayable . "','" .
                     $DrainPayable . "','" .
                     $ZariWorkPayable . "','" .
                     $CoreCuttingPayable . "','" .
                     $StandTypePayable . "','" .
-                
+
                     $CopperPipingRemark . "','" .
                     $CableRemark . "','" .
                     $DrainRemark . "','" .
@@ -3194,46 +3211,46 @@ class Service extends MY_Controller
                     $StandTypeRemark . "','" .
 
                     $this->db->escape_str($data->Remark) . "','" .
-                    $data->Location . "','','','" . 
-                    
-                    $UnitSetup . "','" . 
+                    $data->Location . "','','','" .
+
+                    $UnitSetup . "','" .
                     $Piping . "','" .
 
                     $data->UserID . "','1','Android','" .
                     $IP . "'
-                )"; 
+                )";
 
 
-                
+
                 $_result = $this->master_model->getQueryResult($sql);
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $InstallationID = $_result[0]->ID;
-                    $res = $this->master_model->getQueryResult("call usp_A_GetProductByChallanItemID('".$ChallanItemID."')");
-                    if(!isset($res[0]->Message)) {
+                    $res = $this->master_model->getQueryResult("call usp_A_GetProductByChallanItemID('" . $ChallanItemID . "')");
+                    if (!isset($res[0]->Message)) {
                         $service = $res[0]->Service;
                         $ServiceYear = $res[0]->ServiceYear;
                         $warranty = $res[0]->Warranty;
-                        $service_days = floor(365*$ServiceYear/$service);
+                        $service_days = floor(365 * $ServiceYear / $service);
                         $date = date('Y-m-d');
-                        $warranty_date = date('Y-m-d', strtotime($date. ' + '.$warranty.' days'));
-                        $sql = "call usp_A_AddproductWarranty('".
-                            $data->UserID . "','1','Android','" .$IP . "','" .
+                        $warranty_date = date('Y-m-d', strtotime($date . ' + ' . $warranty . ' days'));
+                        $sql = "call usp_A_AddproductWarranty('" .
+                            $data->UserID . "','1','Android','" . $IP . "','" .
                             $ChallanItemID . "','" .
                             $InstallationID . "','" .
                             $warranty_date . "','" .
                             1 . "'
                         )";
                         $res = $this->master_model->getQueryResult($sql);
-                        for($i=0; $i<$service; $i++) {
-                            $date = date('Y-m-d', strtotime($date. ' + '.$service_days.' days'));
-                            
+                        for ($i = 0; $i < $service; $i++) {
+                            $date = date('Y-m-d', strtotime($date . ' + ' . $service_days . ' days'));
+
                             $ServiceStatus = "Pending";
                             $ServiceType = "Free";
 
                             $IP = GetIP();
-                            $sql = "call usp_A_AddproductService('".
-                                $data->UserID . "','1','Android','" .$IP . "','" .
+                            $sql = "call usp_A_AddproductService('" .
+                                $data->UserID . "','1','Android','" . $IP . "','" .
                                 $ChallanItemID . "','" .
                                 $InstallationID . "','" .
                                 $date . "','" .
@@ -3263,15 +3280,16 @@ class Service extends MY_Controller
             return $response;
         }
     }
-     
-    function editInstallation($data) {
+
+    function editInstallation($data)
+    {
         //echo json_encode(array("data"=>$data, "files"=>$_FILES));
         //die;
         try {
             $response = array();
             $response['error'] = 102;
             $response['message'] = 'Valid Input not found';
-            
+
             $IP = GetIP();
             if (isset($data['IndoorSrNo']) && $data['IndoorSrNo'] != '') {
                 $sql = "call usp_A_EditInstalationIndoorSrNo('" .
@@ -3283,9 +3301,9 @@ class Service extends MY_Controller
                 $_result = $this->master_model->getQueryResult($sql);
                 $response['error'] = 200;
                 $response['message'] = 'Indoor SrNo. Updated';
-                
-            } if (isset($data['OutdoorSrNo']) && $data['OutdoorSrNo'] != '') {
-                
+            }
+            if (isset($data['OutdoorSrNo']) && $data['OutdoorSrNo'] != '') {
+
                 $sql = "call usp_A_EditInstalationOutdoorSrNo('" .
                     $data['ChallanItemID'] . "','" .
                     $data['OutdoorSrNo'] . "','" .
@@ -3295,9 +3313,8 @@ class Service extends MY_Controller
                 $_result = $this->master_model->getQueryResult($sql);
                 $response['error'] = 200;
                 $response['message'] = 'Outdoor SrNo. Updated';
-                
             }
-            
+
             if (@$_FILES['IndoorImage']['error'] == 0 && !empty($_FILES['IndoorImage'])) {
                 $pathMain       = INSTALLATION_UPLOAD_PATH;
                 $path           = INSTALLATION_UPLOAD_PATH;
@@ -3325,7 +3342,7 @@ class Service extends MY_Controller
                 $response['error'] = 200;
                 $response['message'] = 'Indoor Image Updated';
             }
-            
+
             if (@$_FILES['OutdoorImage']['error'] == 0 && !empty($_FILES['OutdoorImage'])) {
                 $pathMain       = INSTALLATION_UPLOAD_PATH;
                 $path           = INSTALLATION_UPLOAD_PATH;
@@ -3353,7 +3370,7 @@ class Service extends MY_Controller
                 $response['error'] = 200;
                 $response['message'] = 'Indoor Image Updated';
             }
-            
+
             return $response;
         } catch (Exception $e) {
             $response['error'] = 104;
@@ -3361,7 +3378,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function PrintInstallation($ID) { 
+    function PrintInstallation($ID)
+    {
         $result = array();
         $Challan = $this->master_model->getQueryResult("call usp_A_GetChallanByID('" . $ID . "')");
         $Quotation = $this->master_model->getQueryResult("call usp_A_GetQuotationByID('" . $Challan[0]->QuotationID . "')");
@@ -3412,7 +3430,7 @@ class Service extends MY_Controller
                 $l['w_page'] = 'page';
             }
             $pdf->setLanguageArray($l);
-        } 
+        }
 
         // ---------------------------------------------------------
 
@@ -3452,10 +3470,10 @@ class Service extends MY_Controller
                             <td>' . wordwrap($Company[0]->Address, 50, "<br/>") . '</td>
                         </tr>
                         <tr>
-                            <td>Contact No.: ' . $Company[0]->ContactNo . ', Email ID: ' . $Company[0]->EmailID.'</td>
+                            <td>Contact No.: ' . $Company[0]->ContactNo . ', Email ID: ' . $Company[0]->EmailID . '</td>
                         </tr>
                         <tr>
-                            <td>' . ($Company[0]->GSTNo!=""?("GSTIN :".$Company[0]->GSTNo):"") . '</td>
+                            <td>' . ($Company[0]->GSTNo != "" ? ("GSTIN :" . $Company[0]->GSTNo) : "") . '</td>
                         </tr>
                     </table>
                     <p style="text-align:center;"><b>Installation Report</b></p>
@@ -3465,14 +3483,14 @@ class Service extends MY_Controller
                             <td>
                                 Customer Name: ' . $Sites[0]->Name . '<br>
                                 Customer Address: ' . $Sites[0]->Address . ' ' . $Sites[0]->Address2 . ', ' . $Sites[0]->CityName . ' ' . $Sites[0]->StateName . ' - ' . $Sites[0]->PinCode . '<br>
-                                Purchase Date: '.$Quotation[0]->EstimateDate.'<br>
-                                DCNo. :'.$Challan[0]->ChallanNo.'<br>
+                                Purchase Date: ' . $Quotation[0]->EstimateDate . '<br>
+                                DCNo. :' . $Challan[0]->ChallanNo . '<br>
                                 Installer Name :_______________________<br>
                             </td>
                             <td>
                             
-                            DSP Name: '.$Challan[0]->ChallanDate.'<br>
-                            Mobile No.: '.$Visitor[0]->MobileNo.'<br>
+                            DSP Name: ' . $Challan[0]->ChallanDate . '<br>
+                            Mobile No.: ' . $Visitor[0]->MobileNo . '<br>
                             DSP Name: _____________________<br>
                             Installer No. :_______________________<br>
                             </td>
@@ -3486,15 +3504,15 @@ class Service extends MY_Controller
                             <th width="492">Brand - Model Description</th>
                             <th width="70">Qty</th>
                         </tr>';
-                        
-                        $html .= '
+
+        $html .= '
                             <tr>
                                 <td>' . (++$item_counter) . '</td>
                                 <td>' . $value->DisplayName . '<br/>' . $value->Model . '</td>
                                 <td>' . $value->Qty . '</td>
                             </tr>';
 
-                        /* $item_counter = 0;
+        /* $item_counter = 0;
                         foreach (@$Item as $key => $value) {
                             $html .= '
                             <tr>
@@ -3503,7 +3521,7 @@ class Service extends MY_Controller
                                 <td>' . $value->Qty . '</td>
                             </tr>';
                         } */
-/* 
+        /* 
                 $html .= '
                         <tr>
                             <td colspan="3">
@@ -3538,9 +3556,9 @@ class Service extends MY_Controller
                             </td>
                         </tr>
                     </table>'; */
-                    $html .= "</table>";
-                    
-                    $html .= '<table border="1" style="border: 1px solid #aaa" cellpadding="8">
+        $html .= "</table>";
+
+        $html .= '<table border="1" style="border: 1px solid #aaa" cellpadding="8">
                         <tr>
                             <td width="52px">1</td>
                             <td width="250px">Time taken for installation</td>
@@ -3588,8 +3606,8 @@ class Service extends MY_Controller
         return $path;
     }
 
-    
-    
+
+
     function addPaymentReminder($data)
     {
         try {
@@ -3922,11 +3940,11 @@ class Service extends MY_Controller
                         )");
                 $Checkintime = '';
                 $Checkouttime = '';
-                
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $data_response = array();
-                    foreach($_result as $key=>$value) {
-                        if(trim(substr($value->Checkintime, 0, strpos($value->Checkintime, ' '))) == date('d-m-Y')){
+                    foreach ($_result as $key => $value) {
+                        if (trim(substr($value->Checkintime, 0, strpos($value->Checkintime, ' '))) == date('d-m-Y')) {
                             //unset($_result[$key]);
                             $Checkintime = $value->Checkintime;
                             $Checkouttime = $value->Checkouttime;
@@ -3936,7 +3954,7 @@ class Service extends MY_Controller
                             $data_response[] = $value;
                         }
                     }
-                    
+
                     //$data_response['Checkintime'] = $Checkintime;
                     //$data_response['Checkouttime'] = $Checkouttime;
 
@@ -3945,7 +3963,7 @@ class Service extends MY_Controller
                     $response['Checkintime'] = $Checkintime;
                     $response['Checkouttime'] = $Checkouttime;
                     $response['data'] = $data_response;
-                    $response['rowcount'] = sizeof($_result) - 2;//(int)$_result['0']->rowcount;
+                    $response['rowcount'] = sizeof($_result) - 2; //(int)$_result['0']->rowcount;
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
@@ -4316,11 +4334,11 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'CurrentPage not found';
             } else {
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 $_result = $this->master_model->getQueryResult("call usp_A_GetPenalty('" .
                     $data->PageSize . "','" .
-                    $data->CurrentPage . "','1', '".
-                    $CityID."'
+                    $data->CurrentPage . "','1', '" .
+                    $CityID . "'
                         )");
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
@@ -4492,8 +4510,8 @@ class Service extends MY_Controller
                 $response['message'] = 'FilterType not found';
             } else {
 
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
-                $UserID = "-1";//isset($data->UserID) ? $data->UserID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
+                $UserID = "-1"; //isset($data->UserID) ? $data->UserID :'-1';
                 $_result = $this->master_model->getQueryResult("call usp_MA_DashboardVisitorReport('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -4540,20 +4558,20 @@ class Service extends MY_Controller
                 $response['message'] = 'UserID not found';
             } else {
 
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
-                $UserID = "-1";//isset($data->UserID) ? $data->UserID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
+                $UserID = "-1"; //isset($data->UserID) ? $data->UserID :'-1';
                 $sql = "call usp_MA_Dashboard('Web','" .
                     $data->FilterType . "','" .
-                    $UserID . "','".
-                    $CityID."'
-                )"; 
+                    $UserID . "','" .
+                    $CityID . "'
+                )";
                 $_result = $this->master_model->getQueryResult($sql);
-                
+
                 $response['data'] = array();
                 $i = 0;
                 foreach ($_result['0'] as $key => $value) {
                     $title = trim(preg_replace('/(?<!\ )[A-Z]/', ' $0', $key));
-                    
+
                     $response['data'][$title] = array('Title' => $title, 'Count' => $value);
                     $i++;
                 }
@@ -4755,12 +4773,12 @@ class Service extends MY_Controller
                 $response['message'] = 'UserID not found';
             } else {
 
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 $_result = $this->master_model->getQueryResult("call usp_A_GetInspection('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
-                    $data->UserID . "','1','".
-                    $CityID."'
+                    $data->UserID . "','1','" .
+                    $CityID . "'
                         )");
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
@@ -4894,13 +4912,13 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'UserID not found';
             } else {
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 $_result = $this->master_model->getQueryResult("call usp_A_GetTicket('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
-                    $data->UserID . "','1','".
-                    $data->Name."','".
-                    $CityID."'
+                    $data->UserID . "','1','" .
+                    $data->Name . "','" .
+                    $CityID . "'
                 )");
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
@@ -5067,10 +5085,10 @@ class Service extends MY_Controller
                     $data->EndDate . "','" .
                     $data->UserID . "'
                 )");
-                
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    if($_result[0]->Advance < 0) {
-                        $_result[0]->Advance = $_result[0]->Advance*-1;
+                    if ($_result[0]->Advance < 0) {
+                        $_result[0]->Advance = $_result[0]->Advance * -1;
                         $_result[0]->AdvanceType = "Employee Credit";
                     } else {
                         $_result[0]->AdvanceType = "Employee Debit";
@@ -5111,26 +5129,26 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'EndDate not found';
             } else {
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 $sql = "call usp_A_GetInvoiceAttendanceWithMaterial('" .
                     $data->QuotationID . "','" .
                     $data->StartDate . "','" .
                     $data->EndDate . "','" .
                     $CityID . "'
-                )"; 
+                )";
                 $_result = $this->master_model->getQueryResult($sql);
-                
+
                 $data = array();
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    foreach($_result as $item) {
-                        if($item->IsMaterial) {
+                    foreach ($_result as $item) {
+                        if ($item->IsMaterial) {
                             $data['material'][] = $item;
                         } else {
                             $data['user'][] = $item;
                         }
                     }
                 }
-                
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_invoiceitem_listed_successfully');
@@ -5228,8 +5246,8 @@ class Service extends MY_Controller
                     $SitesID . "','" .
                     $CityID . "'
                         )");
-                        
- 
+
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_attendance_listed_successfully');
@@ -5321,7 +5339,7 @@ class Service extends MY_Controller
 
                 $IP = GetIP();
 
-                if($data->SitesID == "0") {
+                if ($data->SitesID == "0") {
                     $data->SitesID = 2;
                 }
                 foreach ($data->Item as $key => $value) {
@@ -5413,7 +5431,7 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    
+
     function addTeamDefination($data)
     {
         try {
@@ -5461,12 +5479,12 @@ class Service extends MY_Controller
                 $EndTime = $times[1];
                 $AppointmentStatus = "Assigned";
                 $Reason = '';
- 
-                $ChallanID = isset($data->ChallanID)?$data->ChallanID:"0";
-                $AppointmentID = isset($data->AppointmentID)?$data->AppointmentID:"0";
-                if($AppointmentID == 0) {
+
+                $ChallanID = isset($data->ChallanID) ? $data->ChallanID : "0";
+                $AppointmentID = isset($data->AppointmentID) ? $data->AppointmentID : "0";
+                if ($AppointmentID == 0) {
                     $sql = "call usp_A_AddAppointment('" .
-                        $data->UserID . "','1','Android','" .$IP . "','" .
+                        $data->UserID . "','1','Android','" . $IP . "','" .
                         $data->VisitorID . "','" .
                         $data->ServiceID . "','" .
                         $data->SitesID . "','" .
@@ -5482,7 +5500,7 @@ class Service extends MY_Controller
                     )";
                     $_result = $this->master_model->getQueryResult($sql);
                     if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                        $AppointmentID = isset($_result['0']->ID)?$_result['0']->ID:"0";
+                        $AppointmentID = isset($_result['0']->ID) ? $_result['0']->ID : "0";
                         foreach ($data->UserList as $key => $value) {
                             $_result = $this->master_model->getQueryResult("call usp_A_AddTeamdefination('" .
                                 $value->EmployeeID . "','" .
@@ -5539,7 +5557,7 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    
+
     function editTeamDefination($data)
     {
         try {
@@ -5589,9 +5607,9 @@ class Service extends MY_Controller
                 $StartTime = $times[0];
                 $EndTime = $times[1];
                 $AppointmentStatus = "Assigned";
- 
+
                 $sql = "call usp_A_RescheduleAppointment('" .
-                    $data->UserID . "','1','Android','" .$IP . "','" .
+                    $data->UserID . "','1','Android','" . $IP . "','" .
                     $data->AppointmentID . "','" .
                     $data->Reason . "','" .
                     $AppointmentStatus . "','" .
@@ -5600,13 +5618,13 @@ class Service extends MY_Controller
                     $data->EndDate . "','" .
                     $EndTime . "','" .
                     $data->Remark . "'
-                )"; 
+                )";
                 $_result = $this->master_model->getQueryResult($sql);
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    $ChallanID = isset($data->ChallanID)?$data->ChallanID:"0";
-                    $AppointmentID = isset($_result['0']->ID)?$_result['0']->ID:"0";
-                    
+                    $ChallanID = isset($data->ChallanID) ? $data->ChallanID : "0";
+                    $AppointmentID = isset($_result['0']->ID) ? $_result['0']->ID : "0";
+
                     $_result = $this->master_model->getQueryResult("call usp_A_EditTeamDefinationStatus('" .
                         $data->UserID . "','0','Android','" . $IP . "','" .
                         $AppointmentID . "'
@@ -5667,7 +5685,7 @@ class Service extends MY_Controller
                 $response['message'] = 'Type not found';
             } else {
 
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 if ($data->Type == 'Shuffle') {
                     $_result = $this->master_model->getQueryResult("call usp_GetEmployee(-1,1,'','','-1','-1','-1')");
                 } else {
@@ -5677,7 +5695,7 @@ class Service extends MY_Controller
                         $CityID . "'
                     )");
                 }
-                
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_employee_listed_successfully');
@@ -5849,11 +5867,11 @@ class Service extends MY_Controller
                     @$data->Remark . "','" .
                     @$data->AppointmentID . "'
                 )";
-                $_result = $this->master_model->getQueryResult($sql); 
+                $_result = $this->master_model->getQueryResult($sql);
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $device = $this->getDeviceData($data->UserID);
                     $employee = $this->getEmployeeData($data->UserID);
-                    if(@$device != "") {
+                    if (@$device != "") {
                         $notif_text = $this->getPaymentMessage($_result[0]->ID, $data->UserID);
                         $pushNotificationArr = array(
                             'device_id' => $device,
@@ -5866,7 +5884,7 @@ class Service extends MY_Controller
                         $res = sendPushNotification($pushNotificationArr);
                     }
                     $response['error'] = 200;
-                    $response['message'] = $notif_text;//label('api_msg_payment_added_successfully');
+                    $response['message'] = $notif_text; //label('api_msg_payment_added_successfully');
                     $response['data'] = $_result;
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
@@ -5902,16 +5920,16 @@ class Service extends MY_Controller
             } else if (!isset($data->CustomerID)  || $data->CustomerID == '') {
                 $response['error'] = 102;
                 $response['message'] = 'CustomerID not found';
-            }  else if (!isset($data->StartDate)) {
+            } else if (!isset($data->StartDate)) {
                 $response['error'] = 102;
                 $response['message'] = 'Start Date not found';
-            }  else if (!isset($data->EndDate)) {
+            } else if (!isset($data->EndDate)) {
                 $response['error'] = 102;
                 $response['message'] = 'End Date not found';
-            }  else if (!isset($data->InvoiceNumber)) {
+            } else if (!isset($data->InvoiceNumber)) {
                 $response['error'] = 102;
                 $response['message'] = 'InvoiceNumber not found';
-            }  else if (!isset($data->SiteName)) {
+            } else if (!isset($data->SiteName)) {
                 $response['error'] = 102;
                 $response['message'] = 'Site Name not found';
             } else if (!isset($data->AppointmentID)) {
@@ -5919,8 +5937,8 @@ class Service extends MY_Controller
                 $response['message'] = 'AppointmentID not found';
             } else {
 
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
-                $AppointmentID = isset($data->AppointmentID) ? $data->AppointmentID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
+                $AppointmentID = isset($data->AppointmentID) ? $data->AppointmentID : '-1';
                 $sql = "call usp_A_GetPayment('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -5936,12 +5954,12 @@ class Service extends MY_Controller
                 $_result = $this->master_model->getQueryResult($sql);
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    for($i=0; $i<sizeof($_result); $i++) {
-                        if($_result[$i]->AmountType == 0) {
+                    for ($i = 0; $i < sizeof($_result); $i++) {
+                        if ($_result[$i]->AmountType == 0) {
                             $_result[$i]->AmountType = "Including GST";
-                        } else if($_result[$i]->AmountType == 1) {
+                        } else if ($_result[$i]->AmountType == 1) {
                             $_result[$i]->AmountType = "Excluding GST";
-                        } else if($_result[$i]->AmountType == 2) {
+                        } else if ($_result[$i]->AmountType == 2) {
                             $_result[$i]->AmountType = "Only GST";
                         } else {
                             $_result[$i]->AmountType = "None";
@@ -5995,8 +6013,8 @@ class Service extends MY_Controller
                 $response['message'] = 'Filter Status not found';
             } else {
 
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
-                $AppointmentID = isset($data->AppointmentID) ? $data->AppointmentID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
+                $AppointmentID = isset($data->AppointmentID) ? $data->AppointmentID : '-1';
                 $sql = "call usp_A_GetInvoiceByPaid('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -6008,7 +6026,7 @@ class Service extends MY_Controller
                     $AppointmentID . "'
                 )";
                 $_result = $this->master_model->getQueryResult($sql);
-                
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_invoice_listed_successfully');
@@ -6074,7 +6092,7 @@ class Service extends MY_Controller
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $device = $this->getDeviceData($data->UserID);
                     $employee = $this->getEmployeeData($data->UserID);
-                    if(@$device != "") {
+                    if (@$device != "") {
                         $notif_text = $this->getInvoiceMessage($_result[0]->ID, $data->UserID);
                         $pushNotificationArr = array(
                             'device_id' => $device,
@@ -6121,13 +6139,13 @@ class Service extends MY_Controller
                             $InvoiceNo = $_result_invoice[0]->InvoiceNo;
                             $date = $_result_invoice[0]->InvoiceDate;
                             $amount = $_result_invoice[0]->TotalAmount;
-                            
+
                             // $msg = "Dear ".$name."\nEstimation No: ".$estimation_no."\nDate:".$date."\nAmount: Rs. ".$amount."\nJust to accept this, pass this OTP:".$otp." to engineers.\nHH Enterprise";
                             $Content = $this->master_model->get_smstemplate(4);
-                            
+
                             $msg = str_replace(
-                                array('{name}','{service_name}','{invoice_no}','{invoice_date}','{amount}'), 
-                                array($name, $service_name, $InvoiceNo, $date, $amount), 
+                                array('{name}', '{service_name}', '{invoice_no}', '{invoice_date}', '{amount}'),
+                                array($name, $service_name, $InvoiceNo, $date, $amount),
                                 $Content['SmsMessage']
                             );
 
@@ -6165,7 +6183,7 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    
+
     function addInstallationInvoice($data)
     {
         try {
@@ -6245,7 +6263,7 @@ class Service extends MY_Controller
 
                     $device = $this->getDeviceData($data->UserID);
                     $employee = $this->getEmployeeData($data->UserID);
-                    if(@$device != "") {
+                    if (@$device != "") {
                         $notif_text = $this->getInvoiceMessage($_result[0]->ID, $data->UserID);
                         $pushNotificationArr = array(
                             'device_id' => $device,
@@ -6259,13 +6277,13 @@ class Service extends MY_Controller
                     }
                     $AppointmentID = $data->AppointmentID;
                     $sql = "call usp_A_EditAppointmentStatus(
-                        'Completed','1', $AppointmentID,'Android','" .$IP . "'
+                        'Completed','1', $AppointmentID,'Android','" . $IP . "'
                     )";
                     $_result_appointment = $this->master_model->getQueryResult($sql);
 
                     $this->load->model('admin/config_model');
                     $this->configdata = $this->config_model->getConfig();
-                    
+
                     foreach ($data->Item as $key => $value) {
                         $sql = "call usp_A_AddInvoiceItem('" .
                             $_result['0']->ID . "','" .
@@ -6280,9 +6298,9 @@ class Service extends MY_Controller
                         )";
                         $res_item = $this->master_model->getQueryResult($sql);
                     }
-                    $this->InvoicePrintReceipt($_result['0']->ID); 
+                    $this->InvoicePrintReceipt($_result['0']->ID);
 
-                    
+
 
                     $id = $_result[0]->ID;
                     $visitor_id = $data->VisitorID;
@@ -6299,13 +6317,13 @@ class Service extends MY_Controller
                             $InvoiceNo = $_result_invoice[0]->InvoiceNo;
                             $date = $_result_invoice[0]->InvoiceDate;
                             $amount = $_result_invoice[0]->TotalAmount;
-                            
+
                             // $msg = "Dear ".$name."\nEstimation No: ".$estimation_no."\nDate:".$date."\nAmount: Rs. ".$amount."\nJust to accept this, pass this OTP:".$otp." to engineers.\nHH Enterprise";
                             $Content = $this->master_model->get_smstemplate(4);
-                            
+
                             $msg = str_replace(
-                                array('{name}','{service_name}','{invoice_no}','{invoice_date}','{amount}'), 
-                                array($name, $service_name, $InvoiceNo, $date, $amount), 
+                                array('{name}', '{service_name}', '{invoice_no}', '{invoice_date}', '{amount}'),
+                                array($name, $service_name, $InvoiceNo, $date, $amount),
                                 $Content['SmsMessage']
                             );
 
@@ -6497,9 +6515,9 @@ class Service extends MY_Controller
                                 </td>
                             </tr>
                         </table>';
-                            
-                        
-                    $html .= '<table border="1" cellpadding="8">
+
+
+        $html .= '<table border="1" cellpadding="8">
                         <tr style="background-color:black;color:white;">
                             <th width="50">#</th>
                             <th width="210">Item</th>
@@ -6508,42 +6526,42 @@ class Service extends MY_Controller
                             <th width="100">Rate</th>
                             <th width="100">Amount</th>
                         </tr>';
-                        $item_counter = 1;
-                        if(!isset($Item[0]->Message)) {
-                            foreach ($Item as $key => $value) {
-                                if($value->ProductID!=0) {
-                                    $html .= '
+        $item_counter = 1;
+        if (!isset($Item[0]->Message)) {
+            foreach ($Item as $key => $value) {
+                if ($value->ProductID != 0) {
+                    $html .= '
                                     <tr>
                                         <td>' . ($item_counter++) . '</td>
                                         <td>' . $value->DisplayName . '<br/>' . $value->Model . '</td>
                                         <td>' . $value->PHSNNo . '</td>
                                         <td>' . $value->Qty . '</td>
                                         <td style="text-align: right">Rs.' . $value->Rate . '</td>
-                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate. '</td>
+                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate . '</td>
                                     </tr>';
-                                } else if($value->MaterialID!=0) {
-                                $html .= '
+                } else if ($value->MaterialID != 0) {
+                    $html .= '
                                     <tr>
                                         <td>' . ($item_counter++) . '</td>
                                         <td>' . $value->Material . '</td>
                                         <td>' . $value->HSNNo . '</td>
                                         <td>' . $value->Qty . '</td>
                                         <td style="text-align: right">Rs.' . $value->Rate . '</td>
-                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate. '</td>
+                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate . '</td>
                                     </tr>';
-                                } else {
-                                    $html .= '
+                } else {
+                    $html .= '
                                     <tr>
                                         <td>' . ($item_counter++) . '</td>
-                                        <td>' . $value->InstallationService .'</td>
+                                        <td>' . $value->InstallationService . '</td>
                                         <td>' . 'N/A' . '</td>
                                         <td>' . $value->Qty . '</td>
                                         <td style="text-align: right">Rs.' . $value->Rate . '</td>
-                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate. '</td>
+                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate . '</td>
                                     </tr>';
-                                }
-                            }
-                        }
+                }
+            }
+        }
         $html .= '</table>    
         ';
 
@@ -6601,7 +6619,7 @@ class Service extends MY_Controller
                         <table>
                             <tr>
                                 <td>
-                                <br/><br/>' . $Quotation['0']->Service . ' BILL '.date('M Y').'<br/>
+                                <br/><br/>' . $Quotation['0']->Service . ' BILL ' . date('M Y') . '<br/>
                                 ' . $Invoice['0']->Notes . '<br/>
                                 BANK A/C DETAILS :<br/>
                                 ' . $Company['0']->CompanyName . '<br/>
@@ -6631,7 +6649,7 @@ class Service extends MY_Controller
         /*$pdf->StartTransform();
         $pdf->Rotate(-10);*/
         $pdf->writeHTML($html, true, false, true, false, '');
-       
+
         // reset pointer to the last page
         $pdf->lastPage();
         $File = '';
@@ -6654,8 +6672,8 @@ class Service extends MY_Controller
     {
         try {
             $response = array();
-            $ServiceID = isset($data->ServiceID)?$data->ServiceID:'-1';
-            $_result = $this->master_model->getQueryResult("call usp_A_GetQuestion('-1','1','','1', '".$ServiceID."')");
+            $ServiceID = isset($data->ServiceID) ? $data->ServiceID : '-1';
+            $_result = $this->master_model->getQueryResult("call usp_A_GetQuestion('-1','1','','1', '" . $ServiceID . "')");
             if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                 $response['error'] = 200;
                 $response['message'] = label('api_msg_question_listed_successfully');
@@ -6663,7 +6681,7 @@ class Service extends MY_Controller
             } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                 $msg = explode('~', $_result[0]->Message);
                 $response['error'] = ($msg[0]) ? $msg[0] : '103';
-                $response['message'] = label('api_msg_no_data');//$msg[1];
+                $response['message'] = label('api_msg_no_data'); //$msg[1];
                 $response['data'] = array();
             } else {
                 $response['error'] = 104;
@@ -6772,7 +6790,7 @@ class Service extends MY_Controller
                 )");
                 if (isset($_result_quotation) && !empty($_result_quotation) && !isset($_result_quotation['0']->Message)) {
                     $quotation_data = $_result_quotation[0];
-                    
+
                     $ChallanDate = date('Y-m-d');
                     $Term = "";
                     $Note = "";
@@ -6798,13 +6816,13 @@ class Service extends MY_Controller
                         $Term . "','" .
                         $Note . "'
                     )";
-                    $_result_challan = $this->master_model->getQueryResult($sql); 
+                    $_result_challan = $this->master_model->getQueryResult($sql);
                     if (isset($_result_challan) && !empty($_result_challan) && !isset($_result_challan['0']->Message)) {
                         //challan created. now add quotation item to challan
                         $Item = $this->master_model->getQueryResult("call usp_A_GetQuotationitem('-1','1','" . $ID . "','1','-1','-1')");
                         foreach ($Item as $key => $value) {
-                            if($value->MaterialID == 0 && $value->ProductID !=0 ) {
-                                for($i=1; $i<=$value->Qty; $i++) { 
+                            if ($value->MaterialID == 0 && $value->ProductID != 0) {
+                                for ($i = 1; $i <= $value->Qty; $i++) {
                                     $sql = "call usp_A_AddChallanItem('" .
                                         $_result_challan['0']->ID . "','" .
                                         $data->UserID . "','1','Android','" .
@@ -6839,12 +6857,12 @@ class Service extends MY_Controller
                                 $item_res = $this->master_model->getQueryResult($sql);
                             }
                         }
-                        
+
                         $this->PrintChallan($_result_challan[0]->ID);
                     }
                 }
-                
-                
+
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_quotation_accept_successfully');
@@ -6866,9 +6884,10 @@ class Service extends MY_Controller
             return $response;
         }
     }
-                
+
     //send sms to the customer 
-    public function resendOtp($data) {
+    public function resendOtp($data)
+    {
         try {
             $response = array();
 
@@ -6889,9 +6908,9 @@ class Service extends MY_Controller
                         $date = $_result[0]->EstimateDate;
                         $amount = $_result[0]->Total;
                         $OTP = $_result[0]->OTP;
-                        $msg = "Dear ".$name."\nEstimation No: ".$estimation_no."\nDate:".$date."\nAmount: Rs. ".$amount."\nJust to accept this, pass this OTP:".$OTP." to engineers.\nHH Enterprise";
+                        $msg = "Dear " . $name . "\nEstimation No: " . $estimation_no . "\nDate:" . $date . "\nAmount: Rs. " . $amount . "\nJust to accept this, pass this OTP:" . $OTP . " to engineers.\nHH Enterprise";
                         $response['error'] = 200;
-                        $response['message'] = $msg;//label('api_msg_quotation_listed_successfully');
+                        $response['message'] = $msg; //label('api_msg_quotation_listed_successfully');
                         $response['data'] = $_result; //array(array('QuotationID' => $_result[0]->QuotationID,'OTP' => $_result[0]->OTP));
                     } else if (isset($_result_visitor['0']->Message) && $_result_visitor['0']->Message != "") {
                         $msg = explode('~', $_result[0]->Message);
@@ -6920,7 +6939,8 @@ class Service extends MY_Controller
         }
     }
     //verify the otp
-    function verifyQuotationOtp($data) {
+    function verifyQuotationOtp($data)
+    {
         try {
             $response = array();
 
@@ -6935,18 +6955,18 @@ class Service extends MY_Controller
                     $data->QuotationID . "'
                 )");
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    if($_result[0]->OTP == $data->OTP) {
-                        if($_result[0]->AppointmentID != 0) {
+                    if ($_result[0]->OTP == $data->OTP) {
+                        if ($_result[0]->AppointmentID != 0) {
                             $AppointmentID = $_result[0]->AppointmentID;
                             $IP = GetIP();
                             $_result = $this->master_model->getQueryResult("call usp_A_EditAppointmentStatus(
-                                'InProgress','1', $AppointmentID,'Android','" .$IP . "'
+                                'InProgress','1', $AppointmentID,'Android','" . $IP . "'
                             )");
                         }
 
                         $response['error'] = 200;
                         $response['message'] = label('api_msg_quotation_verified_successfully');
-                        $response['data'] = array(array('QuotationID' => $data->QuotationID,'OTP' => $data->OTP));
+                        $response['data'] = array(array('QuotationID' => $data->QuotationID, 'OTP' => $data->OTP));
                     } else {
                         $response['error'] = 104;
                         $response['message'] = label('api_msg_wrong_otp');
@@ -6969,7 +6989,8 @@ class Service extends MY_Controller
             return $response;
         }
     }
-    function RejectAppointmentQuotation($data) {
+    function RejectAppointmentQuotation($data)
+    {
         try {
             $response = array();
 
@@ -6981,17 +7002,16 @@ class Service extends MY_Controller
                     $data->QuotationID . "'
                 )");
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                        if($_result[0]->AppointmentID != 0) {
-                            $AppointmentID = $_result[0]->AppointmentID;
-                            $IP = GetIP();
-                            $_result = $this->master_model->getQueryResult("call usp_A_EditAppointmentStatus(
-                                'Rejected','1', $AppointmentID,'Android','" .$IP . "'
+                    if ($_result[0]->AppointmentID != 0) {
+                        $AppointmentID = $_result[0]->AppointmentID;
+                        $IP = GetIP();
+                        $_result = $this->master_model->getQueryResult("call usp_A_EditAppointmentStatus(
+                                'Rejected','1', $AppointmentID,'Android','" . $IP . "'
                             )");
-                        }
-                        $response['error'] = 200;
-                        $response['message'] = label('api_msg_quotation_rejected_successfully');
-                        $response['data'] = array(array('QuotationID' => $data->QuotationID));
-                    
+                    }
+                    $response['error'] = 200;
+                    $response['message'] = label('api_msg_quotation_rejected_successfully');
+                    $response['data'] = array(array('QuotationID' => $data->QuotationID));
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
                     $response['error'] = ($msg[0]) ? $msg[0] : '103';
@@ -7080,15 +7100,15 @@ class Service extends MY_Controller
                 }
                 $data->Rounding = round($data->Rounding, 2);
                 $data->Total = $Total;
-                
-                
+
+
                 // $this->load->helper('string');
                 // $data->OTP = random_string('numeric', 4);
                 $digits = 4;
-                $data->OTP = rand(pow(10, $digits-1), pow(10, $digits)-1);
+                $data->OTP = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
                 // $data->StartDate = GetDateInFormat($data->StartDate, DATE_FORMAT, DATABASE_DATE_FORMAT);
                 // $data->EndDate = GetDateInFormat($data->EndDate, DATE_FORMAT, DATABASE_DATE_FORMAT);
-                
+
                 $sql = "call usp_A_AddQuotation('" .
                     $data->SitesID . "','" .
                     $data->UserID . "','1','Android','" .
@@ -7105,7 +7125,7 @@ class Service extends MY_Controller
                     $data->SGST . "','" .
                     $data->IGST . "','" .
                     $data->Rounding . "','" .
-                    $WRTotal . "','" .//$data->Total . "','" .
+                    $WRTotal . "','" . //$data->Total . "','" .
                     $data->ServiceID . "','" .
                     $data->VisitorID . "','" .
                     $data->CustomerID . "','" .
@@ -7115,16 +7135,16 @@ class Service extends MY_Controller
                     $data->StartDate . "','" .
                     $data->EndDate . "','" .
                     'Product' . "','" .
-                    $data->OTP. "','0'
+                    $data->OTP . "','0'
                 )";
-                
+
                 $_result = $this->master_model->getQueryResult($sql);
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-                    
+
                     $device = $this->getDeviceData($data->UserID);
                     $employee = $this->getEmployeeData($data->UserID);
-                    if(@$device != "") {
+                    if (@$device != "") {
                         $notif_text = $this->getQuotationMessage($_result[0]->ID, $data->UserID);
                         $pushNotificationArr = array(
                             'device_id' => $device,
@@ -7136,7 +7156,7 @@ class Service extends MY_Controller
                         );
                         $res = sendPushNotification($pushNotificationArr);
                     }
-                    
+
                     $this->load->model('admin/config_model');
                     $this->configdata = $this->config_model->getConfig();
 
@@ -7157,7 +7177,7 @@ class Service extends MY_Controller
 
                     $this->PrintReceipt($_result['0']->ID);
 
-                    
+
                     $_result_quotation = $this->master_model->getQueryResult("call usp_A_GetQuotationByID('" .
                         $_result[0]->ID . "'
                     )");
@@ -7171,9 +7191,9 @@ class Service extends MY_Controller
                             $date = $_result_quotation[0]->EstimateDate;
                             $amount = $_result_quotation[0]->Total;
                             $OTP = $_result_quotation[0]->OTP;
-                            $msg = "Dear ".$name."\nEstimation No: ".$estimation_no."\nDate:".$date."\nAmount: Rs. ".$amount."\nJust to accept this, pass this OTP:".$OTP." to engineers.\nHH Enterprise";
+                            $msg = "Dear " . $name . "\nEstimation No: " . $estimation_no . "\nDate:" . $date . "\nAmount: Rs. " . $amount . "\nJust to accept this, pass this OTP:" . $OTP . " to engineers.\nHH Enterprise";
                             $response['error'] = 200;
-                            $response['message'] = $msg;//label('api_msg_quotation_listed_successfully');
+                            $response['message'] = $msg; //label('api_msg_quotation_listed_successfully');
                             $response['data'] = $_result; //array(array('QuotationID' => $_result[0]->QuotationID,'OTP' => $_result[0]->OTP));
                         } else if (isset($_result_visitor['0']->Message) && $_result_visitor['0']->Message != "") {
                             $msg = explode('~', $_result[0]->Message);
@@ -7208,7 +7228,7 @@ class Service extends MY_Controller
     }
     public function PrintReceipt($ID)
     {
-        
+
         $this->load->model('admin/config_model');
         $this->configdata = $this->config_model->getConfig();
         $result = array();
@@ -7263,7 +7283,7 @@ class Service extends MY_Controller
                 $l['w_page'] = 'page';
             }
             $pdf->setLanguageArray($l);
-        } 
+        }
 
         // ---------------------------------------------------------
 
@@ -7281,7 +7301,7 @@ class Service extends MY_Controller
         </head>
         <body>';
 
-    $html .= '
+        $html .= '
                 <div>
                     <table>
                         <tr>
@@ -7302,7 +7322,7 @@ class Service extends MY_Controller
                                 ' . $Sites['0']->Address . ' ' . $Sites['0']->Address2 . '<br>
                                 ' . $Sites['0']->CityName . ' ' . $Sites['0']->StateName . '<br>
                                 ' . $Sites['0']->PinCode . '<br>
-                                ' . (($Sites['0']->GSTNo!='')?('GSTIN '.$Sites['0']->GSTNo):('')). '
+                                ' . (($Sites['0']->GSTNo != '') ? ('GSTIN ' . $Sites['0']->GSTNo) : ('')) . '
                             </td>
                             <td>
                             Ship To<br>
@@ -7329,54 +7349,54 @@ class Service extends MY_Controller
                             <th width="100">Amount</th>
                         </tr>';
 
-                        if($Quotation['0']->AppointmentID == 0) {
-                            $item_counter = 1;
-                            foreach (@$Item_Product as $key => $value) {
-                                $html .= '
+        if ($Quotation['0']->AppointmentID == 0) {
+            $item_counter = 1;
+            foreach (@$Item_Product as $key => $value) {
+                $html .= '
                                 <tr>
                                     <td>' . ($item_counter++) . '</td>
                                     <td>' . $value->DisplayName . '<br/>' . $value->Model . '</td>
                                     <td>' . $value->PHSNNo . '</td>
                                     <td>' . $value->Qty . '</td>
                                     <td style="text-align: right">Rs.' . $value->Rate . '</td>
-                                    <td style="text-align: right">Rs.' . $value->Qty * $value->Rate * $value->Days. '</td>
+                                    <td style="text-align: right">Rs.' . $value->Qty * $value->Rate * $value->Days . '</td>
                                 </tr>';
-                            }
-                            foreach (@$Item_Material as $key => $value) {
-                                $html .= '
+            }
+            foreach (@$Item_Material as $key => $value) {
+                $html .= '
                                     <tr>
                                         <td>' . ($item_counter++) . '</td>
                                         <td>' . $value->Material . '</td>
                                         <td>' . $value->HSNNo . '</td>
                                         <td>' . $value->Qty . '</td>
                                         <td style="text-align: right">Rs.' . $value->Rate . '</td>
-                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate * $value->Days. '</td>
+                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate * $value->Days . '</td>
                                     </tr>';
-                            }
-                        } else {
-                            $item_counter = 1;
-                            foreach (@$Item_Service as $key => $value) {
-                                $html .= '
+            }
+        } else {
+            $item_counter = 1;
+            foreach (@$Item_Service as $key => $value) {
+                $html .= '
                                     <tr>
                                         <td>' . ($item_counter++) . '</td>
                                         <td>' . $value->InstallationService . '</td>
                                         <td>N/A</td>
                                         <td>' . $value->Qty . '</td>
                                         <td style="text-align: right">Rs.' . $value->Rate . '</td>
-                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate * $value->Days. '</td>
+                                        <td style="text-align: right">Rs.' . $value->Qty * $value->Rate * $value->Days . '</td>
                                     </tr>';
-                            }
-                        }
+            }
+        }
 
 
-    $html .=     '<tr>
+        $html .=     '<tr>
                             <td colspan="3" style="border-bottom: 0 solid white;"></td>
                             <td colspan="2">Sub Total</td>
                             <td style="text-align: right">Rs.' . $Quotation['0']->SubTotal . '</td>
                         </tr>';
 
-    if ($Quotation['0']->IGST == '' || $Quotation['0']->IGST == 0) {
-        $html .=            '<tr>
+        if ($Quotation['0']->IGST == '' || $Quotation['0']->IGST == 0) {
+            $html .=            '<tr>
                             <td colspan="3" style="border-bottom: 0 solid white;"></td>
                             <td colspan="2">CGST </td>
                             <td style="text-align: right">Rs.' .  (float)$Quotation['0']->CGST . '</td>
@@ -7386,17 +7406,17 @@ class Service extends MY_Controller
                             <td colspan="2">SGST </td>
                             <td style="text-align: right">Rs.' . (float)$Quotation['0']->SGST . '</td>
                         </tr>';
-    } else {
-        $html .=        '<tr>
+        } else {
+            $html .=        '<tr>
                             <td colspan="3" style="border-bottom: 0 solid white;"></td>
                             <td colspan="2">IGST </td>
                             <td style="text-align: right">Rs.' .  (float)$Quotation['0']->IGST . '</td>
                         </tr>
                         ';
-    }
+        }
 
 
-    $html .=            '<tr>
+        $html .=            '<tr>
                             <td colspan="3" style="border-bottom: 0 solid white;"></td>
                             <td colspan="2">Rounding</td>
                             <td style="text-align: right">Rs.' . $Quotation['0']->Rounding . '</td>
@@ -7412,18 +7432,18 @@ class Service extends MY_Controller
                     </table><br>
                     <div>
                        <b>Notes</b><br>
-                       '.$Quotation[0]->Note.'
+                       ' . $Quotation[0]->Note . '
                    </div><br>
                    <div>
                        <b>Terms & Conditions</b><br>
-                       '.$Quotation[0]->Term.'
+                       ' . $Quotation[0]->Term . '
                    </div><br>
                    <div>
                        <b>Authorized Signature _________________________________</b>
                    </div>
                 </div>';
 
-    $html .= '    </body>
+        $html .= '    </body>
         </html>';
 
         // output the HTML content
@@ -7657,10 +7677,10 @@ class Service extends MY_Controller
     {
         try {
             $response = array();
-            $is_material = isset($data->IsMaterial)?$data->IsMaterial:'0';
-            $IsUserType = isset($data->IsUserType)?$data->IsUserType:'-1';
-            $ServiceID = isset($data->ServiceID)?$data->ServiceID:'-1';
-            $_result = $this->master_model->getQueryResult("call usp_A_GetUsertype('-1','1','','".$is_material."','".$ServiceID."','".$IsUserType."','1')");
+            $is_material = isset($data->IsMaterial) ? $data->IsMaterial : '0';
+            $IsUserType = isset($data->IsUserType) ? $data->IsUserType : '-1';
+            $ServiceID = isset($data->ServiceID) ? $data->ServiceID : '-1';
+            $_result = $this->master_model->getQueryResult("call usp_A_GetUsertype('-1','1','','" . $is_material . "','" . $ServiceID . "','" . $IsUserType . "','1')");
 
             if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                 $response['error'] = 200;
@@ -7785,10 +7805,10 @@ class Service extends MY_Controller
             } else {
 
                 $IP = GetIP();
-                
+
                 $EmployeeData =  $this->master_model->getQueryResult("call usp_A_GetDeviceInfoByID('" . $data->UserID . "')");
-                if(isset($data->SiteID) && $data->SiteID == '-1') {
-                    $service_id = isset($data->ServiceID)?$data->ServiceID:'0';
+                if (isset($data->SiteID) && $data->SiteID == '-1') {
+                    $service_id = isset($data->ServiceID) ? $data->ServiceID : '0';
                     $_result = $this->master_model->getQueryResult("call usp_A_AddSites('" .
                         $data->UserID . "','" .
                         $data->UserID . "','1','Android','" .
@@ -7812,10 +7832,10 @@ class Service extends MY_Controller
                         $service_id . "'
                     )");
                     if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
-    
+
                         $device = $this->getDeviceData($data->UserID);
                         $employee = $this->getEmployeeData($data->UserID);
-                        if(@$device != "") {
+                        if (@$device != "") {
                             $notif_text = $this->getSiteMessage($_result[0]->ID, $data->UserID);
                             $pushNotificationArr = array(
                                 'device_id' => $device,
@@ -7843,33 +7863,33 @@ class Service extends MY_Controller
                         $response['message'] = label('api_msg_error_occurred');
                     }
                 } else {
-                    
+
                     $data->Status = getStringClean((isset($data->Status) && $data->Status == 'on') ? ACTIVE : INACTIVE);
                     $data->ModifiedBy = '1';
                     $data->UserType = 'Android';
                     $data->IPAddress = GetIP();
-                    
+
                     $_result = $this->master_model->getQueryResult("call usp_A_EditSites('" .
-                    $data->SiteName . "','" .
-                    $data->ModifiedBy . "','" .
-                    $data->Status . "','" .
-                    $data->SiteID . "','" .
-                    $data->UserType . "','" .
-                    $data->IPAddress . "','" .
-                    $data->SiteName . "','" .
-                    $data->SiteType . "','" .
-                    $data->Address . "','" .
-                    $data->WorkingHours . "','" .
-                    $data->WorkingDays . "','" .
-                    $data->ProposedDate . "','" .
-                    $data->StartDate . "','" .
-                    $data->EndDate . "','" .
-                    $data->GSTNo . "','" .
-                    $data->Address2 . "','" .
-                    $data->CityID . "','" .
-                    $data->StateID . "','" .
-                    $data->PinCode . "')");
-                    
+                        $data->SiteName . "','" .
+                        $data->ModifiedBy . "','" .
+                        $data->Status . "','" .
+                        $data->SiteID . "','" .
+                        $data->UserType . "','" .
+                        $data->IPAddress . "','" .
+                        $data->SiteName . "','" .
+                        $data->SiteType . "','" .
+                        $data->Address . "','" .
+                        $data->WorkingHours . "','" .
+                        $data->WorkingDays . "','" .
+                        $data->ProposedDate . "','" .
+                        $data->StartDate . "','" .
+                        $data->EndDate . "','" .
+                        $data->GSTNo . "','" .
+                        $data->Address2 . "','" .
+                        $data->CityID . "','" .
+                        $data->StateID . "','" .
+                        $data->PinCode . "')");
+
                     if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                         $data = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                             $_result['0']->ID . "'
@@ -7887,7 +7907,6 @@ class Service extends MY_Controller
                         $response['message'] = label('api_msg_error_occurred');
                     }
                 }
-
             }
             return $response;
         } catch (Exception $e) {
@@ -7980,7 +7999,7 @@ class Service extends MY_Controller
                     if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                         $device = $this->getDeviceData($data->UserID);
                         $employee = $this->getEmployeeData($data->UserID);
-                        if(@$device != "") {
+                        if (@$device != "") {
                             $notif_text = $this->getQuotationMessage($_result[0]->ID, $data->UserID);
                             $pushNotificationArr = array(
                                 'device_id' => $device,
@@ -7992,39 +8011,39 @@ class Service extends MY_Controller
                             );
                             $res = sendPushNotification($pushNotificationArr);
                         }
-                        if($data->SiteID == '-1') {
+                        if ($data->SiteID == '-1') {
                             $id = $_result[0]->ID;
                             $user_id = 1;
                             $customer_id = 0;
                             $working_hours = 1;
                             $working_days = 1;
-                            $ServiceID = isset($data->ServiceID)?$data->ServiceID:'0';
+                            $ServiceID = isset($data->ServiceID) ? $data->ServiceID : '0';
                             $_result_site = $this->master_model->getQueryResult("call usp_A_AddSites('" .
-                                    $user_id . "','" .
-                                    $user_id . "','1','Android','" .
-                                    $IP . "','" .
-                                    $id . "','" .
-                                    $customer_id . "','" .
-                                    $data->SiteName . "','" .
-                                    $data->Name . "','" .
-                                    $data->SiteType . "','" .
-                                    $data->Address . "','" .
-                                    $working_hours . "','" .
-                                    $working_days . "','" .
-                                    $data->ProposedDate . "','" .
-                                    $data->StartDate . "','" .
-                                    $data->EndDate . "','" .
-                                    $data->GSTNo . "','" .
-                                    $data->Address2 . "','" .
-                                    $data->CityID . "','" .
-                                    $data->StateID . "','" .
-                                    $data->PinCode . "','" .
-                                    $ServiceID ."'
+                                $user_id . "','" .
+                                $user_id . "','1','Android','" .
+                                $IP . "','" .
+                                $id . "','" .
+                                $customer_id . "','" .
+                                $data->SiteName . "','" .
+                                $data->Name . "','" .
+                                $data->SiteType . "','" .
+                                $data->Address . "','" .
+                                $working_hours . "','" .
+                                $working_days . "','" .
+                                $data->ProposedDate . "','" .
+                                $data->StartDate . "','" .
+                                $data->EndDate . "','" .
+                                $data->GSTNo . "','" .
+                                $data->Address2 . "','" .
+                                $data->CityID . "','" .
+                                $data->StateID . "','" .
+                                $data->PinCode . "','" .
+                                $ServiceID . "'
                                 )");
                             if (isset($_result_site) && !empty($_result_site) && !isset($_result_site['0']->Message)) {
                                 $device = $this->getDeviceData($data->UserID);
                                 $employee = $this->getEmployeeData($data->UserID);
-                                if(@$device != "") {
+                                if (@$device != "") {
                                     $notif_text = $this->getSiteMessage($_result_site[0]->ID, $data->UserID);
                                     $pushNotificationArr = array(
                                         'device_id' => $device,
@@ -8039,10 +8058,10 @@ class Service extends MY_Controller
                                 $data = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                                     $_result_site['0']->ID . "'
                                 )");
-                                
+
                                 $response['error'] = 200;
                                 $response['message'] = label('api_msg_visitor_added_successfully');
-                                $response['data'] = $data;//$_result;
+                                $response['data'] = $data; //$_result;
                                 //$response['date'] = $_result_site;
                             } else if (isset($_result_site['0']->Message) && $_result_site['0']->Message != "") {
                                 $msg = explode('~', $_result_site[0]->Message);
@@ -8053,8 +8072,7 @@ class Service extends MY_Controller
                                 $response['error'] = 104;
                                 $response['message'] = label('api_msg_error_occurred');
                             }
-                        }
-                        else {
+                        } else {
                             $data = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                                 $data->SiteID . "'
                             )");
@@ -8073,9 +8091,9 @@ class Service extends MY_Controller
                     }
                 } else {
                     $IP = GetIP();
-                    $visitor = $this->master_model->getQueryResult("call usp_A_GetVisitorByMobileNo('" .$data->MobileNo . "')");
+                    $visitor = $this->master_model->getQueryResult("call usp_A_GetVisitorByMobileNo('" . $data->MobileNo . "')");
                     $visitor_id = $visitor[0]->VisitorID;
-                    
+
                     //$address = $data->Address.', '.$data->Address2;
                     $_result = $this->master_model->getQueryResult("call usp_A_EditVisitor('" .
                         $data->Name . "','" .
@@ -8091,39 +8109,39 @@ class Service extends MY_Controller
                         $data->PinCode . "','" .
                         $data->LeadType . "'
                     )");
-                    $ServiceID = isset($data->ServiceID)?$data->ServiceID:'0';
+                    $ServiceID = isset($data->ServiceID) ? $data->ServiceID : '0';
                     $id = $_result[0]->ID;
                     $user_id = 1;
                     $customer_id = 0;
                     $working_hours = 1;
                     $working_days = 1;
-                    if($data->SiteID == '-1') {
+                    if ($data->SiteID == '-1') {
                         $_result_site = $this->master_model->getQueryResult("call usp_A_AddSites('" .
-                                $user_id . "','" .
-                                $user_id . "','1','Android','" .
-                                $IP . "','" .
-                                $id . "','" .
-                                $customer_id . "','" .
-                                $data->SiteName . "','" .
-                                $data->Name . "','" .
-                                $data->SiteType . "','" .
-                                $data->Address . "','" .
-                                $working_hours . "','" .
-                                $working_days . "','" .
-                                $data->ProposedDate . "','" .
-                                $data->StartDate . "','" .
-                                $data->EndDate . "','" .
-                                $data->GSTNo . "','" .
-                                $data->Address2 . "','" .
-                                $data->CityID . "','" .
-                                $data->StateID . "','" .
-                                $data->PinCode . "','" .
-                                $ServiceID ."'
+                            $user_id . "','" .
+                            $user_id . "','1','Android','" .
+                            $IP . "','" .
+                            $id . "','" .
+                            $customer_id . "','" .
+                            $data->SiteName . "','" .
+                            $data->Name . "','" .
+                            $data->SiteType . "','" .
+                            $data->Address . "','" .
+                            $working_hours . "','" .
+                            $working_days . "','" .
+                            $data->ProposedDate . "','" .
+                            $data->StartDate . "','" .
+                            $data->EndDate . "','" .
+                            $data->GSTNo . "','" .
+                            $data->Address2 . "','" .
+                            $data->CityID . "','" .
+                            $data->StateID . "','" .
+                            $data->PinCode . "','" .
+                            $ServiceID . "'
                             )");
                         if (isset($_result_site) && !empty($_result_site) && !isset($_result_site['0']->Message)) {
                             $device = $this->getDeviceData($data->UserID);
                             $employee = $this->getEmployeeData($data->UserID);
-                            if(@$device != "") {
+                            if (@$device != "") {
                                 $notif_text = $this->getSiteMessage($_result_site[0]->ID, $data->UserID);
                                 $pushNotificationArr = array(
                                     'device_id' => $device,
@@ -8138,10 +8156,10 @@ class Service extends MY_Controller
                             $data = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                                 $_result_site['0']->ID . "'
                             )");
-                            
+
                             $response['error'] = 200;
                             $response['message'] = label('api_msg_visitor_added_successfully');
-                            $response['data'] = $data;//$_result;
+                            $response['data'] = $data; //$_result;
                             //$response['date'] = $_result_site;
                         } else if (isset($_result_site['0']->Message) && $_result_site['0']->Message != "") {
                             $msg = explode('~', $_result_site[0]->Message);
@@ -8152,8 +8170,7 @@ class Service extends MY_Controller
                             $response['error'] = 104;
                             $response['message'] = label('api_msg_error_occurred');
                         }
-                    }
-                    else {
+                    } else {
                         $res_sites = $this->master_model->getQueryResult("call usp_A_GetSites(
                             '-1',
                             '1',
@@ -8166,7 +8183,7 @@ class Service extends MY_Controller
                             $ServiceID,'" .
                             $data->CityID . "'
                         )");
-                        if(isset($res_sites[0]->Message)) {
+                        if (isset($res_sites[0]->Message)) {
                             $_result_site = $this->master_model->getQueryResult("call usp_A_AddSites('" .
                                 $user_id . "','" .
                                 $user_id . "','1','Android','" .
@@ -8187,12 +8204,12 @@ class Service extends MY_Controller
                                 $data->CityID . "','" .
                                 $data->StateID . "','" .
                                 $data->PinCode . "','" .
-                                $ServiceID ."'
+                                $ServiceID . "'
                             )");
                             if (isset($_result_site) && !empty($_result_site) && !isset($_result_site['0']->Message)) {
                                 $device = $this->getDeviceData($data->UserID);
                                 $employee = $this->getEmployeeData($data->UserID);
-                                if(@$device != "") {
+                                if (@$device != "") {
                                     $notif_text = $this->getSiteMessage($_result_site[0]->ID, $data->UserID);
                                     $pushNotificationArr = array(
                                         'device_id' => $device,
@@ -8207,10 +8224,10 @@ class Service extends MY_Controller
                                 $data = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" .
                                     $_result_site['0']->ID . "'
                                 )");
-                                
+
                                 $response['error'] = 200;
                                 $response['message'] = label('api_msg_visitor_added_successfully');
-                                $response['data'] = $data;//$_result;
+                                $response['data'] = $data; //$_result;
                                 //$response['date'] = $_result_site;
                             } else if (isset($_result_site['0']->Message) && $_result_site['0']->Message != "") {
                                 $msg = explode('~', $_result_site[0]->Message);
@@ -8230,7 +8247,7 @@ class Service extends MY_Controller
                             $response['message'] = label('api_msg_visitor_added_successfully');
                         }
                     }
-                    
+
                     /* if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                         $response['error'] = 200;
                         $response['message'] = label('api_msg_visitor_update_successfully');
@@ -8500,7 +8517,7 @@ class Service extends MY_Controller
             } else if (!isset($data->LeadType)) {
                 $response['error'] = 102;
                 $response['message'] = 'LeadType not found';
-            }  else {
+            } else {
 
                 //$LeadType = $data->LeadType == '' ? 'All' : $data->LeadType;
                 $_result = $this->master_model->getQueryResult("call usp_A_GetCustomer('" .
@@ -8509,7 +8526,8 @@ class Service extends MY_Controller
                     $data->Name . "','" .
                     $data->EmailID . "','1','" .
                     $data->LeadType . "','" .
-                    $data->CityID . "'
+                    $data->CityID . "','" .
+                    783 . "'
                 )");
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
@@ -8561,7 +8579,7 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'Qoutation Status not found';
             } else {
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 $_result = $this->master_model->getQueryResult("call usp_A_GetQuotationByStatus('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -8570,7 +8588,7 @@ class Service extends MY_Controller
                     $data->CustomerID . "','" .
                     $data->QoutationStatus . "','" .
                     $CityID . "'
-                )"); 
+                )");
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     foreach ($_result as $key => $value) {
                         $sql = "call usp_A_GetQuotationitem('-1',1,'" . $value->QuotationID . "',1,'1','-1')";
@@ -8626,8 +8644,8 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'Qoutation Status not found';
             } else {
-                
-                $CityID = isset($data->CityID) ? $data->CityID :'-1';
+
+                $CityID = isset($data->CityID) ? $data->CityID : '-1';
                 $_result = $this->master_model->getQueryResult("call usp_A_GetQuotationByStatus('" .
                     $data->PageSize . "','" .
                     $data->CurrentPage . "','" .
@@ -8636,7 +8654,7 @@ class Service extends MY_Controller
                     $data->CustomerID . "','" .
                     $data->QoutationStatus . "','" .
                     $CityID . "'
-                )"); 
+                )");
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     foreach ($_result as $key => $value) {
                         $sql = "call usp_A_GetQuotationChallanitem('-1',1,'" . $value->QuotationID . "',1,'1','1')";
@@ -8667,7 +8685,7 @@ class Service extends MY_Controller
         }
     }
 
-    
+
     function getSites($data)
     {
         try {
@@ -8692,16 +8710,16 @@ class Service extends MY_Controller
                 $ServiceID = isset($data->ServiceID) ? $data->ServiceID : '-1';
 
                 $_result = $this->master_model->getQueryResult("call usp_A_GetSites('" .
-                $data->PageSize . "','" .
-                $data->CurrentPage . "','" .
-                $data->SiteName . "','" .
-                $data->VisitorID . "','" .
-                $data->CustomerID . "','" .
-                '' . "','" .
-                '' . "','" .
-                '' . "','" .
-                $ServiceID ."','" .
-                $data->CityID . "'
+                    $data->PageSize . "','" .
+                    $data->CurrentPage . "','" .
+                    $data->SiteName . "','" .
+                    $data->VisitorID . "','" .
+                    $data->CustomerID . "','" .
+                    '' . "','" .
+                    '' . "','" .
+                    '' . "','" .
+                    $ServiceID . "','" .
+                    $data->CityID . "'
                 )");
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
@@ -8760,7 +8778,7 @@ class Service extends MY_Controller
                 $_result = $this->master_model->getQueryResult("call usp_A_GetService('-1','1','','1')");
                 $response_data = array();
                 $counter = 0;
-                foreach($_result as $key=>$value) {
+                foreach ($_result as $key => $value) {
                     $sites = array();
                     $ServiceID = isset($value->ServiceID) ? $value->ServiceID : '-1';
                     $result = $this->master_model->getQueryResult("call usp_A_GetSites('" .
@@ -8768,17 +8786,17 @@ class Service extends MY_Controller
                         $data->CurrentPage . "','" .
                         $data->SiteName . "','" .
                         $data->VisitorID . "','" .
-                        $data->CustomerID . "','".
-                        $data->StartDate . "','".
-                        $data->EndDate . "','".
-                        $data->SiteType . "','".
-                        $ServiceID."','" .
+                        $data->CustomerID . "','" .
+                        $data->StartDate . "','" .
+                        $data->EndDate . "','" .
+                        $data->SiteType . "','" .
+                        $ServiceID . "','" .
                         $data->CityID . "'
                     )");
-                    if(!isset($result[0]->Message)) {
+                    if (!isset($result[0]->Message)) {
                         $sites = $result;
                     }
-                    $response_data[] = array('Title'=> $value->Service, "Sites" =>$sites);
+                    $response_data[] = array('Title' => $value->Service, "Sites" => $sites);
                     $counter++;
                 }
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
@@ -9036,7 +9054,7 @@ class Service extends MY_Controller
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_visitor_listed_successfully');
                     $response['data'] = $_result;
-                    
+
                     $ServiceID = isset($data->ServiceID) ? $data->ServiceID : '-1';
                     $response_sites = $this->master_model->getQueryResult("call usp_A_GetSites(
                         '-1',
@@ -9047,16 +9065,16 @@ class Service extends MY_Controller
                         '' . "','" .
                         '' . "','" .
                         '' . "','" .
-                        $ServiceID."','" . 
+                        $ServiceID . "','" .
                         $data->CityID . "'
                     )");
-                    
+
                     if (isset($response_sites) && !empty($response_sites) && !isset($response_sites['0']->Message)) {
                         $response['sites'] = $response_sites;
                     } else {
                         $response['sites'] = array();
                     }
-                    
+
                     $response['rowcount'] = (int)$_result['0']->rowcount;
                 } else if (isset($_result['0']->Message) && $_result['0']->Message != "") {
                     $msg = explode('~', $_result[0]->Message);
@@ -9122,7 +9140,7 @@ class Service extends MY_Controller
                 $response['error'] = 102;
                 $response['message'] = 'PageSize not found';
             } else {
-                $_result = $this->master_model->getQueryResult("call usp_A_GetReason('-1','1','','".$data->ReasonType."','1')");
+                $_result = $this->master_model->getQueryResult("call usp_A_GetReason('-1','1','','" . $data->ReasonType . "','1')");
 
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $response['error'] = 200;
@@ -9412,7 +9430,7 @@ class Service extends MY_Controller
         return $response;
     }
 
-    
+
     function getPage($data)
     {
         try {
@@ -9424,7 +9442,7 @@ class Service extends MY_Controller
             } else {
 
                 $_result = $this->master_model->getQueryResult("call usp_GetCMSPage('','" . $data->PageName . "')");
-                
+
                 if (isset($_result) && !empty($_result) && !isset($_result['0']->Message)) {
                     $response['error'] = 200;
                     $response['message'] = label('api_msg_customerprocess_listed_successfully');
@@ -9478,7 +9496,7 @@ class Service extends MY_Controller
         exit();
     }
     /*** End Api ***/
-    
+
     function getCustomerProcess($data)
     {
         try {
@@ -9759,7 +9777,7 @@ class Service extends MY_Controller
                 $response['error'] = 104;
                 $response['message'] = label('api_msg_error_occurred');
             }
-            
+
             return $response;
         } catch (Exception $e) {
             $response['error'] = 104;

@@ -25,6 +25,9 @@ class Admindashboard extends Admin_Controller
         $data = array();
         $this->load->view('admin/includes/header');
         $data['Dashboard'] = $this->common_model->GetDashboard($this->input->post());
+        // echo "<pre>";
+        // print_r($data['Dashboard']);
+        // die;
         $this->load->view('admin/admindasboard/index', $data);
         $data['page_level_js'] = $this->load->view('admin/admindasboard/index_js', $data, TRUE);
         $this->load->view('admin/includes/footer', $data);
@@ -33,7 +36,7 @@ class Admindashboard extends Admin_Controller
     public function ajax_dashboard()
     {
         if ($this->input->post()) {
-            
+
             $data = array();
             $data['FilterType'] = $this->input->post('FilterType');
             $data['Dashboard'] = $this->common_model->GetDashboard($this->input->post());

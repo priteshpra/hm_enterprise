@@ -18,7 +18,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content  green white-text">
             <p class="card-stats-title"><i class="mdi-social-group-add"></i> Number Of Lead</p>
-            <h4 class="card-stats-number"><?php echo $Dashboard->TotalLeads; ?></h4>
+            <h4 class="card-stats-number"><?php echo @$Dashboard->TotalLeads; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -32,7 +32,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content pink lighten-2 white-text">
             <p class="card-stats-title"><i class="mdi-action-trending-up"></i> Total Customer</p>
-            <h4 class="card-stats-number"><?php echo $Dashboard->TotalCustomers; ?></h4>
+            <h4 class="card-stats-number"><?php echo @$Dashboard->TotalCustomers; ?></h4>
             <p class="card-stats-compare"><span class="deep-purple-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -46,7 +46,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content  grey white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Site</p>
-            <h4 class="card-stats-number"><?php echo $Dashboard->TotalSites; ?></h4>
+            <h4 class="card-stats-number"><?php echo @$Dashboard->TotalSites; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -60,7 +60,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content  indigo white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Collection</p>
-            <h4 class="card-stats-number"><?php echo number_format($Dashboard->TotalCollections, 2); ?></h4>
+            <h4 class="card-stats-number"><?php echo isset($Dashboard->TotalCollections) ? number_format($Dashboard->TotalCollections, 2) : ''; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -76,7 +76,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content  indigo lighten-3 white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total HouseKeeping Collection</p>
-            <h4 class="card-stats-number"><?php echo number_format($Dashboard->HouseKeepingCollections, 2); ?></h4>
+            <h4 class="card-stats-number"><?php echo isset($Dashboard->HouseKeepingCollections) ? number_format($Dashboard->HouseKeepingCollections, 2) : ''; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -90,7 +90,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content  teal white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Deep Cleaing Collection</p>
-            <h4 class="card-stats-number"><?php echo number_format($Dashboard->DeepCleaingCollections, 2); ?></h4>
+            <h4 class="card-stats-number"><?php echo isset($Dashboard->DeepCleaingCollections) ? number_format($Dashboard->DeepCleaingCollections, 2) : ''; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -104,7 +104,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content   brown lighten-1 white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Sanetize Collection</p>
-            <h4 class="card-stats-number"><?php echo number_format($Dashboard->SanetizeCollections, 2); ?></h4>
+            <h4 class="card-stats-number"><?php echo isset($Dashboard->SanetizeCollections) ? number_format($Dashboard->SanetizeCollections, 2) : ''; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -118,7 +118,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content green darken-2 white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Present</p>
-            <h4 class="card-stats-number"><?php echo $Dashboard->TotalPresences; ?></h4>
+            <h4 class="card-stats-number"><?php echo @$Dashboard->TotalPresences; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -132,7 +132,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content red lighten-1 white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Absent</p>
-            <h4 class="card-stats-number"><?php echo $Dashboard->TotalAbsents; ?></h4>
+            <h4 class="card-stats-number"><?php echo @$Dashboard->TotalAbsents; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -147,7 +147,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content orange lighten-1 white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Half Day</p>
-            <h4 class="card-stats-number"><?php echo $Dashboard->TotalHalfDays; ?></h4>
+            <h4 class="card-stats-number"><?php echo @$Dashboard->TotalHalfDays; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -161,7 +161,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content  blue white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Half Over Time</p>
-            <h4 class="card-stats-number"><?php echo $Dashboard->TotalHalfOverTimes; ?></h4>
+            <h4 class="card-stats-number"><?php echo @$Dashboard->TotalHalfOverTimes; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -175,7 +175,7 @@ if ($FilterType == "Daily") {
     <div class="card">
         <div class="card-content deep-purple lighten-1 white-text">
             <p class="card-stats-title"><i class="mdi-notification-sync"></i>Total Full Over Time</p>
-            <h4 class="card-stats-number"><?php echo $Dashboard->TotalFullOverTimes; ?></h4>
+            <h4 class="card-stats-number"><?php echo @$Dashboard->TotalFullOverTimes; ?></h4>
             <p class="card-stats-compare"><span class="green-text text-lighten-5"><?php echo $Str; ?></span>
             </p>
         </div>
@@ -185,4 +185,3 @@ if ($FilterType == "Daily") {
     </div>
 </div>
 <br><br>
-
