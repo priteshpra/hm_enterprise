@@ -21,7 +21,7 @@ class Sites_model extends CI_Model
         $ServiceID = ($this->input->post('ServiceID') != '') ? $this->input->post('ServiceID') : -1;
 
         $ProposedStartDate   = ($this->input->post('ProposedStartDate') != '') ? GetDateInFormat($this->input->post('ProposedStartDate'), DATE_FORMAT, DATABASE_DATE_FORMAT) : '';
-        $ProposedEndDate   = ($this->input->post('ProposedEndDate') != '') ? GetDateInFormat($this->input->post('ProposedEndDate'), DATE_FORMAT, DATABASE_DATE_FORMAT) : '';
+        $ProposedEndDate   = ($this-> input->post('ProposedEndDate') != '') ? GetDateInFormat($this->input->post('ProposedEndDate'), DATE_FORMAT, DATABASE_DATE_FORMAT) : '';
         $SiteType = ($this->input->post('SiteType') != '') ? $this->input->post('SiteType') : 'All';
 
         $sql = "call usp_A_GetSites( '$PageSize','$CurrentPage','$SiteName','$VisitorID','-1','$ProposedStartDate','$ProposedEndDate','$SiteType','$CityID','$ServiceID','')";
