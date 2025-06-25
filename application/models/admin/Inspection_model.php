@@ -15,7 +15,7 @@ class Inspection_model extends CI_Model
     {
         $UserID = ($this->input->post('UserID') != '') ? $this->input->post('UserID') : -1;
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
-        $sql = "call usp_A_GetInspection('$PageSize','$CurrentPage','$UserID','$Status')";
+        $sql = "call usp_A_GetInspection('$PageSize','$CurrentPage','$UserID','$Status','-1')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -29,8 +29,9 @@ class Inspection_model extends CI_Model
         $query->next_result();
         return $query->result();
     }
-    
-    function Insert($array) {
+
+    function Insert($array)
+    {
         $array['UserID'] = $this->session->userdata['UserID'];
         $array['SitesID'] = getStringClean((isset($array['SitesID'])) ? $array['SitesID'] : 0);
         $array['FieldOperatorID'] = getStringClean((isset($array['FieldOperatorID'])) ? $array['FieldOperatorID'] : 0);
@@ -43,23 +44,24 @@ class Inspection_model extends CI_Model
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
         $array['IPAddress'] = GetIP();
         $sql = "call usp_A_AddInspection('" .
-                $array['UserID'] . "','" .
-                $array['CreatedBy'] . "','" .
-                $array['Status'] . "','".
-                $array['UserType']."','".
-                $array['IPAddress'] . "','".
-                $array['SitesID']."','".
-                $array['FieldOperatorID']."','".
-                $array['QualityManagerID']."','".
-                $array['OperationManagerID']."','".
-                $array['Remarks']."','".
-                $array['Image']."')";
+            $array['UserID'] . "','" .
+            $array['CreatedBy'] . "','" .
+            $array['Status'] . "','" .
+            $array['UserType'] . "','" .
+            $array['IPAddress'] . "','" .
+            $array['SitesID'] . "','" .
+            $array['FieldOperatorID'] . "','" .
+            $array['QualityManagerID'] . "','" .
+            $array['OperationManagerID'] . "','" .
+            $array['Remarks'] . "','" .
+            $array['Image'] . "')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->row();
     }
-    
-    function InsertAnswer($array) {
+
+    function InsertAnswer($array)
+    {
         $array['InspectionID'] = getStringClean((isset($array['InspectionID'])) ? $array['InspectionID'] : 0);
         $array['QuestionID'] = getStringClean((isset($array['QuestionID'])) ? $array['QuestionID'] : 0);
         $array['Answer'] = getStringClean((isset($array['Answer'])) ? $array['Answer'] : '');
@@ -68,13 +70,13 @@ class Inspection_model extends CI_Model
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
         $array['IPAddress'] = GetIP();
         $sql = "call usp_A_AddInspectionAnswer('" .
-                $array['InspectionID'] . "','" .
-                $array['CreatedBy'] . "','" .
-                $array['Status'] . "','".
-                $array['UserType']."','".
-                $array['IPAddress'] . "','".
-                $array['QuestionID']."','".
-                $array['Answer']."')";
+            $array['InspectionID'] . "','" .
+            $array['CreatedBy'] . "','" .
+            $array['Status'] . "','" .
+            $array['UserType'] . "','" .
+            $array['IPAddress'] . "','" .
+            $array['QuestionID'] . "','" .
+            $array['Answer'] . "')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->row();

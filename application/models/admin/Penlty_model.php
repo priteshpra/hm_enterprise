@@ -14,7 +14,7 @@ class Penlty_model extends CI_Model
     function ListData($PageSize = 10, $CurrentPage = 1)
     {
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
-        $sql = "call usp_A_GetPenalty('$PageSize','$CurrentPage','$Status')";
+        $sql = "call usp_A_GetPenalty('$PageSize','$CurrentPage','$Status','-1')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -28,8 +28,9 @@ class Penlty_model extends CI_Model
         $query->next_result();
         return $query->result();
     }
-    
-    function Insert($array) {
+
+    function Insert($array)
+    {
         $array['Reason'] = getStringClean((isset($array['Reason'])) ? $array['Reason'] : '');
         $array['SiteID'] = getStringClean((isset($array['SiteID'])) ? $array['SiteID'] : 0);
         $array['PenaltyDate'] = ($array['PenaltyDate'] != '') ? GetDateInFormat($array['PenaltyDate'], DATE_FORMAT, DATABASE_DATE_FORMAT) : DEFAULT_DATE;
@@ -38,19 +39,20 @@ class Penlty_model extends CI_Model
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
         $array['IPAddress'] = GetIP();
         $sql = "call usp_A_AddPenalty('" .
-                $array['PenaltyDate'] . "','" .
-                $array['CreatedBy'] . "','" .
-                $array['Status'] . "','".
-                $array['UserType']."','".
-                $array['IPAddress'] . "','".
-                $array['SiteID']."','".
-                $array['Reason']."')";
+            $array['PenaltyDate'] . "','" .
+            $array['CreatedBy'] . "','" .
+            $array['Status'] . "','" .
+            $array['UserType'] . "','" .
+            $array['IPAddress'] . "','" .
+            $array['SiteID'] . "','" .
+            $array['Reason'] . "')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->row();
     }
-    
-    function InsertItem($array) {
+
+    function InsertItem($array)
+    {
         $array['PenaltyID'] = getStringClean((isset($array['PenaltyID'])) ? $array['PenaltyID'] : '');
         $array['UserID'] = getStringClean((isset($array['UserID'])) ? $array['UserID'] : 0);
         $array['Penalty'] = getStringClean((isset($array['Penalty'])) ? $array['Penalty'] : 0);
@@ -59,13 +61,13 @@ class Penlty_model extends CI_Model
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
         $array['IPAddress'] = GetIP();
         $sql = "call usp_A_AddPenaltyitem('" .
-                $array['PenaltyID'] . "','" .
-                $array['CreatedBy'] . "','" .
-                $array['Status'] . "','".
-                $array['UserType']."','".
-                $array['IPAddress'] . "','".
-                $array['UserID']."','".
-                $array['Penalty']."')";
+            $array['PenaltyID'] . "','" .
+            $array['CreatedBy'] . "','" .
+            $array['Status'] . "','" .
+            $array['UserType'] . "','" .
+            $array['IPAddress'] . "','" .
+            $array['UserID'] . "','" .
+            $array['Penalty'] . "')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->row();

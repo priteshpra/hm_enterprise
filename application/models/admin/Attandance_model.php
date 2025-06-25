@@ -29,7 +29,7 @@ class Attandance_model extends CI_Model
         $StartDate = ($this->input->post('StartDate') != '') ? GetDateInFormat($this->input->post('StartDate'), DATE_FORMAT, DATABASE_DATE_FORMAT)  : DEFAULT_DATE;
         $EndDate = ($this->input->post('EndDate') != '') ? GetDateInFormat($this->input->post('EndDate'), DATE_FORMAT, DATABASE_DATE_FORMAT)  : DEFAULT_DATE;
 
-        $sql = "call usp_A_GetEmployeeAttendanceByFromToDate( '$PageSize','$CurrentPage','$StartDate','$EndDate')";
+        $sql = "call usp_A_GetEmployeeAttendanceByFromToDate( '$PageSize','$CurrentPage','$StartDate','$EndDate','-1')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -87,7 +87,7 @@ class Attandance_model extends CI_Model
             $array['QuotationID'] . "','" .
             $array['Overtime'] . "')";
 
-            
+
 
         $query = $this->db->query($sql);
         $query->next_result();

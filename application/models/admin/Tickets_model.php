@@ -11,7 +11,7 @@ class Tickets_model extends CI_Model
         parent::__construct();
     }
 
-    function ListData($PageSize = 10, $CurrentPage = 1, $SiteName)
+    function ListData($PageSize = 10, $CurrentPage = 1, $SiteName = 'SiteName')
     {
         $RoleID = $this->session->RoleID;
         $UserID = $this->session->UserID;
@@ -23,7 +23,7 @@ class Tickets_model extends CI_Model
         $Category = getStringClean(($this->input->post('Category') != '') ? $this->input->post('Category') : '');
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
         $RoleName = ($this->input->post('RoleName') != '') ? $this->input->post('RoleName') : '';
-        $sql = "call usp_A_GetTicket( '$PageSize' , '$CurrentPage', '-1','-1','".$RoleName."')";
+        $sql = "call usp_A_GetTicket( '$PageSize' , '$CurrentPage', '-1','-1','" . $RoleName . "','-1')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -70,21 +70,21 @@ class Tickets_model extends CI_Model
         $array['ID'] = getStringClean((isset($array['TicketID'])) ? $array['TicketID'] : 0);
         $array['Image'] = getStringClean((isset($array['Image'])) ? $array['Image'] : '');
         $array['Status'] = getStringClean((isset($array['Status']) && $array['Status'] == 'on') ? ACTIVE : INACTIVE);
-      
-        $array['UserType'] = $this->session->userdata['UserID'];    
+
+        $array['UserType'] = $this->session->userdata['UserID'];
         $array['IPAddress'] = GetIP();
 
-         $sql = "call usp_A_EditTicket('" .
+        $sql = "call usp_A_EditTicket('" .
             $array['Name'] . "','" .
-            $array['UserID'] . "','" .          
+            $array['UserID'] . "','" .
             $array['Description'] . "','" .
             $array['UserType'] . "','" .
             $array['Status'] . "','" .
             $array['ID'] . "','" .
             $array['UserType'] . "','" .
             $array['IPAddress'] . "','" .
-            $array['PriorityID'] . "','" .  
-            $array['Image'] . "','" .            
+            $array['PriorityID'] . "','" .
+            $array['Image'] . "','" .
             $array['CityID'] . "')";
 
 
@@ -101,9 +101,10 @@ class Tickets_model extends CI_Model
         return $query->row();
     }
 
-   public function changeStatus($category_array) {
+    public function changeStatus($category_array)
+    {
         //print_r($category_array);exit();
-          $category_array['ID']  = (isset($category_array['ID'])) ? $category_array['ID'] : NULL;
+        $category_array['ID']  = (isset($category_array['ID'])) ? $category_array['ID'] : NULL;
         $category_array['modified_by']     = (isset($category_array['modified_by'])) ? $category_array['modified_by'] : NULL;
         $category_array['Status']  = (isset($category_array['Status'])) ? $category_array['Status'] : NULL;
 

@@ -17,7 +17,7 @@ class Payment_model extends CI_Model
         $CustomerID = ($this->input->post('CustomerID') != '') ? $this->input->post('CustomerID') : -1;
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
 
-        $sql = "call usp_A_GetPayment( '$PageSize','$CurrentPage','$InvoiceID','$Status','$CustomerID')";
+        $sql = "call usp_A_GetPayment( '$PageSize','$CurrentPage','$InvoiceID','$Status','$CustomerID','','','','','-1','')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
