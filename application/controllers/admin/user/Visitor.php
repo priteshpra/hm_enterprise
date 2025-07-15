@@ -63,7 +63,7 @@ class Visitor extends Admin_Controller
                 $this->session->set_userdata('NewServiceID', $data['ServiceID']);
                 $res = $this->visitor_model->checkMobileNo($data['MobileNo']);
                 if (isset($res)) {
-                    $this->session->set_userdata('MobileNo',$data['MobileNo']);
+                    $this->session->set_userdata('MobileNo', $data['MobileNo']);
                     if ($res->VisitorID) {
                         redirect(site_url('admin/user/visitor/edit/' . $res->VisitorID));
                     } else {
@@ -111,7 +111,7 @@ class Visitor extends Admin_Controller
                     $data['CustomerID'] = $visitor->CustomerID;
                     $res = $this->sites_model->Insert($data);
                     if ($data['SubmitType'] == "Add") {
-                        redirect(site_url('admin/user/sites/add/' . @$res->ID));
+                        redirect(site_url('admin/user/sites/add/' . @$data['VisitorID']));
                     } else {
                         redirect(site_url('admin/user/visitor'));
                     }

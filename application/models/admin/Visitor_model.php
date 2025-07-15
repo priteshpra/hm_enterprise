@@ -16,7 +16,7 @@ class Visitor_model extends CI_Model
         $Name = getStringClean(($this->input->post('Name') != '') ? $this->input->post('Name') : '');
         $EmailID = getStringClean(($this->input->post('EmailID') != '') ? $this->input->post('EmailID') : '');
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
-        $LeadType = ($this->input->post('LeadType') != '') ? $this->input->post('LeadType') : -1;
+        $LeadType = ($this->input->post('LeadType') != '') ? $this->input->post('LeadType') : 'All';
         $CityID = $this->CityID;
 
         $sql = "call usp_A_GetVisitor( '$PageSize','$CurrentPage','$Name','$EmailID','$Status', '$LeadType','$CityID')";
@@ -50,6 +50,7 @@ class Visitor_model extends CI_Model
             $array['Name'] . "','" .
             $array['EmailID'] . "','" .
             $array['MobileNo'] . "','" .
+            $array['Address'] . "','" .
             $array['Address'] . "','" .
             $array['StateID'] . "','" .
             $array['CityID'] . "','" .
@@ -86,6 +87,7 @@ class Visitor_model extends CI_Model
             $array['IPAddress'] . "','" .
             $array['EmailID'] . "','" .
             $array['MobileNo'] . "','" .
+            $array['Address'] . "','" .
             $array['Address'] . "','" .
             $array['StateID'] . "','" .
             $array['CityID'] . "','" .

@@ -52,15 +52,16 @@ class Customer extends Admin_Controller
         unset($res);
     }
 
-    public function sitecombobox() {
-        if($this->input->get()){            
+    public function sitecombobox()
+    {
+        if ($this->input->get()) {
             $json = array();
             //$_POST['UsertypeData'] = ($this->input->get('q')=="")?'':$this->input->get('q');
-            $data = $this->sites_model->ListData(-1,1);
+            $data = $this->sites_model->ListData(-1, 1);
             foreach ($data as $key => $value) {
-                if(@$value->Message)
+                if (@$value->Message)
                     break;
-                $json[] = ['id'=>$value->SitesID, 'text'=>$value->SiteName];
+                $json[] = ['id' => $value->SitesID, 'text' => $value->SiteName];
             }
 
             echo json_encode($json);
@@ -144,5 +145,4 @@ class Customer extends Admin_Controller
         header('Cache-Control: max-age=0'); //no cache
         $objWriter->save('php://output');
     }
-
 }
