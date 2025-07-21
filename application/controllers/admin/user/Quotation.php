@@ -136,7 +136,7 @@ class Quotation extends Admin_Controller
                 redirect(site_url('admin/user/quotation/add/'));
             }
         }
-        $data['Notes'] = $this->notes_model->GetByType('Quotation');
+        $data['Notes'] = [];//$this->notes_model->GetByType('Quotation');
         $this->load->view('admin/includes/header');
         $data['page_name'] = 'add';
         $data['CustomerID'] = $Sites->CustomerID;
