@@ -17,8 +17,9 @@ class Teamdefination_model extends CI_Model
         $QuotationID = ($this->input->post('QuotationID') != '') ? $this->input->post('QuotationID') : -1;
         $CustomerID = ($this->input->post('CustomerID') != '') ? $this->input->post('CustomerID') : -1;
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
-
-        $sql = "call usp_A_GetTeamDefinition( '$PageSize','$CurrentPage','$SitesID','$Status','$QuotationID','$CustomerID')";
+        $ChallanID = ($this->input->post('ChallanID') != '') ? $this->input->post('ChallanID') : -1;
+        $AppointmentID = ($this->input->post('AppointmentID') != '') ? $this->input->post('AppointmentID') : -1;
+        $sql = "call usp_A_GetTeamDefinition( '$PageSize','$CurrentPage','$SitesID','$Status','$QuotationID','$CustomerID','$ChallanID','$AppointmentID')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -48,7 +49,7 @@ class Teamdefination_model extends CI_Model
         $array['StartTime'] = getStringClean((isset($array['StartTime'])) ? $array['StartTime'] : '');
         $array['EndTime'] = getStringClean((isset($array['EndTime'])) ? $array['EndTime'] : '');
         $array['Type'] = getStringClean((isset($array['Type'])) ? $array['Type'] : 'New');
-        
+
         $array['Status'] = getStringClean((isset($array['Status']) && $array['Status'] == 'on') ? ACTIVE : INACTIVE);
         $array['CreatedBy'] = $this->session->userdata['UserID'];
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
@@ -80,5 +81,4 @@ class Teamdefination_model extends CI_Model
         $query->next_result();
         return $query->row();
     }
-
 }

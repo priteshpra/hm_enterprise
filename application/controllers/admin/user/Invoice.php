@@ -56,9 +56,12 @@ class Invoice extends Admin_Controller
 
     public function add($ID = NULL)
     {
+        // print_r($this->input->post());
+        // die;
         $data = $res = array();
         $data['data'] = $this->quotation_model->GetByID($ID);
-        $Sites = $this->sites_model->GetByID($data['data']->SitesID);
+        // $Sites = $this->sites_model->GetByID($data['data']->SitesID);
+        $Sites = $this->sites_model->GetByID($this->input->post('SitesID'));
 
         if ($this->input->post()) {
             $this->load->library('form_validation');
@@ -72,14 +75,15 @@ class Invoice extends Admin_Controller
 
                     $item = array();
                     $item['InvoiceID'] = @$res->ID;
-
-                    for ($i = 0; $i < count($data['UsertypeID']); $i++) {
-                        $item['UsertypeID'] = $data['UsertypeID'][$i];
-                        $item['HSN_SAC'] = $data['HSN_SAC'][$i];
-                        $item['Qty'] = $data['Qty'][$i];
-                        $item['Rate'] = $data['Rate'][$i];
-                        $item['Amount'] = $item['Qty'] * $item['Rate'];
-                        $this->invoice_model->InsertItem($item);
+                    if ($data['UsertypeID'] != 0) {
+                        for ($i = 0; $i < count($data['UsertypeID']); $i++) {
+                            $item['UsertypeID'] = $data['UsertypeID'][$i];
+                            $item['HSN_SAC'] = $data['HSN_SAC'][$i];
+                            $item['Qty'] = $data['Qty'][$i];
+                            $item['Rate'] = $data['Rate'][$i];
+                            $item['Amount'] = $item['Qty'] * $item['Rate'];
+                            $this->invoice_model->InsertItem($item);
+                        }
                     }
 
                     $this->PrintReceipt(@$res->ID);
@@ -110,7 +114,7 @@ class Invoice extends Admin_Controller
             $data['ISIGST'] = 'No';
         } else {
             $data['ISIGST'] = 'Yes';
-        }        
+        }
         $data['ID'] = $ID;
 
         $data['Usertype'] = getUsertypeComboBox();
@@ -172,7 +176,7 @@ class Invoice extends Admin_Controller
 
         $_POST['QuotationID'] = $ID;
         $_POST['Status'] = 1;
-        
+
         $data['ID'] = $ID;
 
         $data['CGST'] = $this->configdata->CGST;
@@ -196,7 +200,8 @@ class Invoice extends Admin_Controller
         unset($data, $res);
     }
 
-    public function getUserDataByDate() {
+    public function getUserDataByDate()
+    {
         $_POST['QuotationID'] = $this->input->post('id');
         $_POST['StartDate'] = $this->input->post('startdate');
         $_POST['EndDate'] = $this->input->post('enddate');
@@ -204,7 +209,8 @@ class Invoice extends Admin_Controller
         //$data['material'] = $this->invoice_model->ListInvoiceMaterial(-1, 1);
         $this->load->view('admin/user/invoice/ajax_item_withoutfixcost', $data);
     }
-    public function getMaterialDataByDate() {
+    public function getMaterialDataByDate()
+    {
         $_POST['QuotationID'] = $this->input->post('id');
         $_POST['StartDate'] = $this->input->post('startdate');
         $_POST['EndDate'] = $this->input->post('enddate');
@@ -521,7 +527,7 @@ class Invoice extends Admin_Controller
                         <table>
                             <tr>
                                 <td>
-                                <br/><br/>' . $Quotation['0']->Service . ' BILL ('.date('M Y').')<br/><br/>
+                                <br/><br/>' . $Quotation['0']->Service . ' BILL (' . date('M Y') . ')<br/><br/>
                                 ' . $Invoice['0']->Notes . '<br/><br/>
                                 BANK A/C DETAILS :<br/>
                                 ' . $Company['0']->CompanyName . '<br/>

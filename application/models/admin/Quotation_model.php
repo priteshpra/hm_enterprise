@@ -40,7 +40,7 @@ class Quotation_model extends CI_Model
     {
         $QuotationID = ($this->input->post('QuotationID') != '') ? $this->input->post('QuotationID') : -1;
         $Status = ($this->input->post('Status') != '') ? $this->input->post('Status') : -1;
-        $sql = "call usp_A_GetQuotationItem( '$PageSize','$CurrentPage','$QuotationID','$Status','-1')";
+        $sql = "call usp_A_GetQuotationItem( '$PageSize','$CurrentPage','$QuotationID','$Status','-1','-1')";
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -73,7 +73,13 @@ class Quotation_model extends CI_Model
         $array['CreatedBy'] = $this->session->userdata['UserID'];
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
         $array['IPAddress'] = GetIP();
-
+        $array['StartDate'] = (isset($array['StartDate'])) ? GetDateInFormat($array['StartDate'], DATE_FORMAT, DATABASE_DATE_FORMAT) : DEFAULT_DATE;
+        $array['EndDate'] = (isset($array['EndDate'])) ? GetDateInFormat($array['EndDate'], DATE_FORMAT, DATABASE_DATE_FORMAT) : DEFAULT_DATE;
+        $array['QuotationType'] = getStringClean((isset($array['QuotationType'])) ? $array['QuotationType'] : '');
+        $array['OTP'] = getStringClean((isset($array['OTP'])) ? $array['OTP'] : '');
+        $array['AppointmentID'] = getStringClean((isset($array['AppointmentID'])) ? $array['AppointmentID'] : 0);
+        // print_r($array);
+        // die();
         $sql = "call usp_A_AddQuotation('" .
             $array['SitesID'] . "','" .
             $array['CreatedBy'] . "','" .
@@ -96,8 +102,14 @@ class Quotation_model extends CI_Model
             $array['ServiceID'] . "','" .
             $array['VisitorID'] . "','" .
             $array['CustomerID'] . "','" .
-            $array['Term'] . "','" .
-            $array['Note'] . "')";
+            $array['Terms'] . "','" .
+            $array['Notes'] . "','" .
+            $array['Notes'] . "','" .
+            $array['StartDate'] . "','" .
+            $array['EndDate'] . "','" .
+            $array['QuotationType'] . "','" .
+            $array['OTP'] . "','" .
+            $array['AppointmentID'] . "')";
 
         $query = $this->db->query($sql);
         $query->next_result();
@@ -114,7 +126,8 @@ class Quotation_model extends CI_Model
         $array['Rate'] = getStringClean((isset($array['Rate'])) ? $array['Rate'] : 0);
         $array['Amount'] = getStringClean((isset($array['Amount'])) ? $array['Amount'] : 0);
         $array['Days'] = getStringClean((isset($array['Days'])) ? $array['Days'] : 0);
-
+        $array['InstallationService'] = getStringClean((isset($array['InstallationService'])) ? $array['InstallationService'] : 0);
+        $array['Uom'] = getStringClean((isset($array['Uom'])) ? $array['Uom'] : '');
         $array['Status'] = 1;
         $array['CreatedBy'] = $this->session->userdata['UserID'];
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
@@ -127,10 +140,14 @@ class Quotation_model extends CI_Model
             $array['UserType'] . "','" .
             $array['IPAddress'] . "','" .
             $array['UsertypeID'] . "','" .
+            $array['UsertypeID'] . "','" .
             $array['Qty'] . "','" .
             $array['Rate'] . "','" .
             $array['Amount'] . "','" .
-            $array['Days'] . "')";
+            $array['Days'] . "','" .
+            $array['InstallationService'] . "','" .
+            $array['Uom'] . "'
+            )";
 
         $query = $this->db->query($sql);
         $query->next_result();
@@ -168,6 +185,8 @@ class Quotation_model extends CI_Model
         $array['QualityManagerID'] = getStringClean((isset($array['QualityManagerID'])) ? $array['QualityManagerID'] : 0);
         $array['OperationManagerID'] = getStringClean((isset($array['OperationManagerID'])) ? $array['OperationManagerID'] : 0);
         $array['TotalEmployee'] = getStringClean((isset($array['TotalEmployee'])) ? $array['TotalEmployee'] : 0);
+        $array['StartTime'] = getStringClean((isset($array['StartTime'])) ? $array['StartTime'] : '');
+        $array['EndTime'] = getStringClean((isset($array['EndTime'])) ? $array['EndTime'] : '');
 
         $array['Status'] = 1;
         $array['CreatedBy'] = $this->session->userdata['UserID'];
@@ -182,6 +201,8 @@ class Quotation_model extends CI_Model
             $array['UserType'] . "','" .
             $array['IPAddress'] . "','" .
             $array['EndDate'] . "','" .
+            $array['StartTime'] . "','" .
+            $array['EndTime'] . "','" .
             $array['CustomerID'] . "')";
 
         $query = $this->db->query($sql);

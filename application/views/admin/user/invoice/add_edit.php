@@ -1,4 +1,4 @@
-<?php //pr($item); 
+<?php //pr($item);
 ?>
 <div class="container">
     <h4 class="header m-t-0">
@@ -11,6 +11,7 @@
             <input id="QuotationID" name="QuotationID" value="<?php echo $data->QuotationID; ?>" type="hidden" />
             <input id="SitesID" name="SitesID" value="<?php echo $data->SitesID; ?>" type="hidden" />
             <input id="CustomerID" name="CustomerID" value="<?php echo $data->CustomerID; ?>" type="hidden" />
+            <input id="UsertypeID" name="UsertypeID" value="<?php echo isset($data->UsertypeID) ? $data->UsertypeID : 0; ?>" type="hidden" />
 
             <div class="row">
                 <div class="input-field col s12 m6">
@@ -40,10 +41,12 @@
                 </div>
                 <div class="input-field col s12 m12 small-input">
                     <div id="medication_main" class="row" style="margin-bottom:0">
+                        <?php //print_r($item); 
+                        ?>
                         <?php foreach ($item as $key => $value) { ?>
                             <div class="diagnosis_medication_panel_box medicationAddList">
                                 <div class="col s12 m5">
-                                    <?php echo getUsertypeComboBox($value->UsertypeID); ?>
+                                    <?php echo isset($value->UsertypeID) ? getUsertypeComboBox($value->UsertypeID) : ''; ?>
                                 </div>
                                 <div class="col s12 m7">
                                     <div class="row">
@@ -52,7 +55,7 @@
                                             <label for="HSN_SAC" class="LHSN_SAC">HSN/SAC</label>
                                         </div>
                                         <div class="input-field col s12 m2">
-                                            <input name="Qty[]" type="text" value="<?php echo $value->Qty*$value->Days; ?>" class="empty_validation_class Qty" maxlength="100" />
+                                            <input name="Qty[]" type="text" value="<?php echo $value->Qty * $value->Days; ?>" class="empty_validation_class Qty" maxlength="100" />
                                             <label for="Qty" class="active">Qty</label>
                                         </div>
                                         <div class="input-field col s12 m3">
@@ -72,7 +75,7 @@
                             </div>
                         <?php } ?>
                     </div>
-                    
+
                     <div class="row total">
                         <div class="input-field col s12 m5">
                         </div>

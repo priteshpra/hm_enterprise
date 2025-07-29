@@ -7628,6 +7628,9 @@ class Service extends MY_Controller
                         $data->UserID . "','" .
                         $data->UserID . "','1','Android','" .
                         $IP . "','" .
+                        $data->EndDate . "','" .
+                        $data->StartTime . "','" .
+                        $data->EndTime . "','" .
                         $data->VisitorID . "'
                     )");
                     $data->CustomerID = $_res['0']->ID;
