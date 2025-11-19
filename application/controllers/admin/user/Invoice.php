@@ -56,9 +56,12 @@ class Invoice extends Admin_Controller
 
     public function add($ID = NULL)
     {
+        // print_r($this->input->post());
+        // die;
         $data = $res = array();
         $data['data'] = $this->quotation_model->GetByID($ID);
-        $Sites = $this->sites_model->GetByID($data['data']->SitesID);
+        // $Sites = $this->sites_model->GetByID($data['data']->SitesID);
+        $Sites = $this->sites_model->GetByID($this->input->post('SitesID'));
 
         if ($this->input->post()) {
             $this->load->library('form_validation');
@@ -72,14 +75,15 @@ class Invoice extends Admin_Controller
 
                     $item = array();
                     $item['InvoiceID'] = @$res->ID;
-
-                    for ($i = 0; $i < count($data['UsertypeID']); $i++) {
-                        $item['UsertypeID'] = $data['UsertypeID'][$i];
-                        $item['HSN_SAC'] = $data['HSN_SAC'][$i];
-                        $item['Qty'] = $data['Qty'][$i];
-                        $item['Rate'] = $data['Rate'][$i];
-                        $item['Amount'] = $item['Qty'] * $item['Rate'];
-                        $this->invoice_model->InsertItem($item);
+                    if ($data['UsertypeID'] != 0) {
+                        for ($i = 0; $i < count($data['UsertypeID']); $i++) {
+                            $item['UsertypeID'] = $data['UsertypeID'][$i];
+                            $item['HSN_SAC'] = $data['HSN_SAC'][$i];
+                            $item['Qty'] = $data['Qty'][$i];
+                            $item['Rate'] = $data['Rate'][$i];
+                            $item['Amount'] = $item['Qty'] * $item['Rate'];
+                            $this->invoice_model->InsertItem($item);
+                        }
                     }
 
                     $this->PrintReceipt(@$res->ID);

@@ -32,10 +32,10 @@ class Invoice_model extends CI_Model
 
         //this was only for users, material was not included
         $sql = "call usp_A_GetInvoiceAttendance( '$QuotationID','$StartDate','$EndDate')";
-        
+
         //this is for user and material both
         //$sql = "call usp_A_GetInvoiceAttendanceWithMaterial( '$QuotationID','$StartDate','$EndDate')";
-        
+
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -48,7 +48,7 @@ class Invoice_model extends CI_Model
         $QuotationID = ($this->input->post('QuotationID') != '') ? $this->input->post('QuotationID') : -1;
 
         $sql = "call usp_A_GetInvoiceMaterial( '$QuotationID','$StartDate','$EndDate')";
-        
+
         $query = $this->db->query($sql);
         $query->next_result();
         return $query->result();
@@ -76,6 +76,9 @@ class Invoice_model extends CI_Model
         $array['Status'] = getStringClean((isset($array['Status']) && $array['Status'] == 'on') ? ACTIVE : INACTIVE);
         $array['CreatedBy'] = $this->session->userdata['UserID'];
         $array['UserType'] = $this->session->userdata['UserType'] . 'Web';
+        $array['AppointmentID'] = getStringClean((isset($array['AppointmentID'])) ? $array['AppointmentID'] : 0);
+        $array['CurrentLocation'] = isset($array['CurrentLocation']) ? $array['CurrentLocation'] : '';
+        $array['CompanyID'] = getStringClean((isset($array['CompanyID'])) ? $array['CompanyID'] : 0);
         $array['IPAddress'] = GetIP();
 
         $sql = "call usp_A_AddInvoice('" .
@@ -85,6 +88,7 @@ class Invoice_model extends CI_Model
             $array['UserType'] . "','" .
             $array['IPAddress'] . "','" .
             $array['SitesID'] . "','" .
+            $array['CompanyID'] . "','" .
             $array['QuotationID'] . "','" .
             $array['StartDate'] . "','" .
             $array['EndDate'] . "','" .
@@ -95,7 +99,10 @@ class Invoice_model extends CI_Model
             $array['Notes'] . "','" .
             $array['Terms'] . "','" .
             $array['InvoiceDate'] . "','" .
-            $array['SubTotal'] . "')";
+            $array['SubTotal'] . "','" .
+            $array['AppointmentID'] . "','" .
+            $array['CurrentLocation'] . "'
+            )";
 
         $query = $this->db->query($sql);
         $query->next_result();

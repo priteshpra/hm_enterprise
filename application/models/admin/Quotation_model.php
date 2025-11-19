@@ -78,7 +78,13 @@ class Quotation_model extends CI_Model
         $array['OTP'] = getStringClean((isset($array['OTP'])) ? $array['OTP'] : '');
         $array['AppointmentID'] = getStringClean((isset($array['AppointmentID'])) ? $array['AppointmentID'] : 0);
         $array['IPAddress'] = GetIP();
-
+        $array['StartDate'] = (isset($array['StartDate'])) ? GetDateInFormat($array['StartDate'], DATE_FORMAT, DATABASE_DATE_FORMAT) : DEFAULT_DATE;
+        $array['EndDate'] = (isset($array['EndDate'])) ? GetDateInFormat($array['EndDate'], DATE_FORMAT, DATABASE_DATE_FORMAT) : DEFAULT_DATE;
+        $array['QuotationType'] = getStringClean((isset($array['QuotationType'])) ? $array['QuotationType'] : '');
+        $array['OTP'] = getStringClean((isset($array['OTP'])) ? $array['OTP'] : '');
+        $array['AppointmentID'] = getStringClean((isset($array['AppointmentID'])) ? $array['AppointmentID'] : 0);
+        // print_r($array);
+        // die();
         $sql = "call usp_A_AddQuotation('" .
             $array['SitesID'] . "','" .
             $array['CreatedBy'] . "','" .
@@ -126,6 +132,7 @@ class Quotation_model extends CI_Model
         $array['Rate'] = getStringClean((isset($array['Rate'])) ? $array['Rate'] : 0);
         $array['Amount'] = getStringClean((isset($array['Amount'])) ? $array['Amount'] : 0);
         $array['Days'] = getStringClean((isset($array['Days'])) ? $array['Days'] : 0);
+
         $array['InstallationService'] = getStringClean((isset($array['InstallationService'])) ? $array['InstallationService'] : '');
         $array['Uom'] = getStringClean((isset($array['Uom'])) ? $array['Uom'] : '');
 
@@ -147,7 +154,8 @@ class Quotation_model extends CI_Model
             $array['Amount'] . "','" .
             $array['Days'] . "','" .
             $array['InstallationService'] . "','" .
-            $array['Uom'] . "')";
+            $array['Uom'] . "'
+            )";
 
         $query = $this->db->query($sql);
         $query->next_result();
@@ -185,6 +193,8 @@ class Quotation_model extends CI_Model
         $array['QualityManagerID'] = getStringClean((isset($array['QualityManagerID'])) ? $array['QualityManagerID'] : 0);
         $array['OperationManagerID'] = getStringClean((isset($array['OperationManagerID'])) ? $array['OperationManagerID'] : 0);
         $array['TotalEmployee'] = getStringClean((isset($array['TotalEmployee'])) ? $array['TotalEmployee'] : 0);
+        $array['StartTime'] = getStringClean((isset($array['StartTime'])) ? $array['StartTime'] : '');
+        $array['EndTime'] = getStringClean((isset($array['EndTime'])) ? $array['EndTime'] : '');
 
         $array['Status'] = 1;
         $array['CreatedBy'] = $this->session->userdata['UserID'];
@@ -199,6 +209,8 @@ class Quotation_model extends CI_Model
             $array['UserType'] . "','" .
             $array['IPAddress'] . "','" .
             $array['EndDate'] . "','" .
+            $array['StartTime'] . "','" .
+            $array['EndTime'] . "','" .
             $array['CustomerID'] . "')";
 
         $query = $this->db->query($sql);
