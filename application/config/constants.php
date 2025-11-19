@@ -124,8 +124,8 @@ define('DEFAULT_ADMIN_EMAIL', 'shripa.saggisoftsolutions@gmail.com'); //'hairart
 define('DEFAULT_ADMIN_EMAIL_PASSWORD', 'Shripa@1234');
 define('DEFAULT_FROM_NAME', 'info');
 
-define('DEFAULT_WEBSITE_LOGO', 'assets/admin/img/logo.png');
-define('DEFAULT_WEBSITE_FAVICON', 'assets/admin/img/favicon.png');
+define('DEFAULT_WEBSITE_LOGO', 'assets/admin/img/logo.jpg');
+define('DEFAULT_WEBSITE_FAVICON', 'assets/admin/img/favicon.jpg');
 define('DEFAULT_EMAIL_IMAGE', 'assets/front/images/email/');
 
 /* For DUMMY Image*/
@@ -264,6 +264,6 @@ define('NOTIFICATION_ADDINVOICE', "AddInvoice");
 define('NOTIFICATION_ADDPAYMENT', "AddPayment");
 
 define('INSTALLATION_TYPE', array("Tpey-1", "Type-2", "Type-3"));
-define('PAYMENT_TYPE', array("Cash", "Cheque", "Bank Transfer","Kasar","Other"));
+define('PAYMENT_TYPE', array("Cash", "Cheque", "Bank Transfer", "Kasar", "Other"));
 define('SERVICE_TYPE', array("Installation", "Free Service", "Paid Service", "Re-Installation"));
 define('SERVICES_PER_YEAR', array("2", "3", "4", "6"));

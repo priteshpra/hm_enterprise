@@ -110,7 +110,7 @@ class Invoice extends Admin_Controller
             $data['ISIGST'] = 'No';
         } else {
             $data['ISIGST'] = 'Yes';
-        }        
+        }
         $data['ID'] = $ID;
 
         $data['Usertype'] = getUsertypeComboBox();
@@ -172,7 +172,7 @@ class Invoice extends Admin_Controller
 
         $_POST['QuotationID'] = $ID;
         $_POST['Status'] = 1;
-        
+
         $data['ID'] = $ID;
 
         $data['CGST'] = $this->configdata->CGST;
@@ -196,7 +196,8 @@ class Invoice extends Admin_Controller
         unset($data, $res);
     }
 
-    public function getUserDataByDate() {
+    public function getUserDataByDate()
+    {
         $_POST['QuotationID'] = $this->input->post('id');
         $_POST['StartDate'] = $this->input->post('startdate');
         $_POST['EndDate'] = $this->input->post('enddate');
@@ -204,7 +205,8 @@ class Invoice extends Admin_Controller
         //$data['material'] = $this->invoice_model->ListInvoiceMaterial(-1, 1);
         $this->load->view('admin/user/invoice/ajax_item_withoutfixcost', $data);
     }
-    public function getMaterialDataByDate() {
+    public function getMaterialDataByDate()
+    {
         $_POST['QuotationID'] = $this->input->post('id');
         $_POST['StartDate'] = $this->input->post('startdate');
         $_POST['EndDate'] = $this->input->post('enddate');
@@ -521,7 +523,7 @@ class Invoice extends Admin_Controller
                         <table>
                             <tr>
                                 <td>
-                                <br/><br/>' . $Quotation['0']->Service . ' BILL ('.date('M Y').')<br/><br/>
+                                <br/><br/>' . $Quotation['0']->Service . ' BILL (' . date('M Y') . ')<br/><br/>
                                 ' . $Invoice['0']->Notes . '<br/><br/>
                                 BANK A/C DETAILS :<br/>
                                 ' . $Company['0']->CompanyName . '<br/>
@@ -534,7 +536,7 @@ class Invoice extends Admin_Controller
                     <td style="border:1px solid #c3c3c3;">
                         <table style="text-align:center;">
                             <tr>
-                                <td>For, THE CLEANING COMPANY<br/><br/><br/><br/><br/><br/>Authorized Signature
+                                <td>For, GROWTHIFY COMPANY<br/><br/><br/><br/><br/><br/>Authorized Signature
                                 </td>
                             </tr>
                         </table>

@@ -1,6 +1,6 @@
 <?php
 // Website Title
-$lang['msg_lbl_site_title_name'] = "The Cleaning Company";
+$lang['msg_lbl_site_title_name'] = "Growthify";
 
 //listing and add edit page's common labels
 $lang['msg_lbl_status'] = "Status";

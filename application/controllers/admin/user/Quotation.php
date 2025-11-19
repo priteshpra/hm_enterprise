@@ -136,7 +136,7 @@ class Quotation extends Admin_Controller
                 redirect(site_url('admin/user/quotation/add/'));
             }
         }
-        $data['Notes'] = [];//$this->notes_model->GetByType('Quotation');
+        $data['Notes'] = []; //$this->notes_model->GetByType('Quotation');
         $this->load->view('admin/includes/header');
         $data['page_name'] = 'add';
         $data['CustomerID'] = $Sites->CustomerID;
@@ -317,7 +317,7 @@ class Quotation extends Admin_Controller
         $result = array();
 
         $Quotation = $this->master_model->getQueryResult("call usp_A_GetQuotationByID('" . $ID . "')");
-        $Item = $this->master_model->getQueryResult("call usp_A_GetQuotationitem('-1','1','" . $ID . "','1','-1')");
+        $Item = $this->master_model->getQueryResult("call usp_A_GetQuotationitem('-1','1','" . $ID . "','1','-1','-1')");
         $Sites = $this->master_model->getQueryResult("call usp_A_GetSitesByID('" . $Quotation['0']->SitesID . "')");
         $Company = $this->master_model->getQueryResult("call usp_A_GetCompanyByID('" . $Quotation['0']->CompanyID . "')");
 
@@ -403,7 +403,7 @@ class Quotation extends Admin_Controller
                                     ' . $Sites['0']->Address . ' ' . $Sites['0']->Address2 . '<br>
                                     ' . $Sites['0']->CityName . ' ' . $Sites['0']->StateName . '<br>
                                     ' . $Sites['0']->PinCode . '<br>
-                                    ' . (($Sites['0']->GSTNo!='')?('GSTIN '.$Sites['0']->GSTNo):('')). '
+                                    ' . (($Sites['0']->GSTNo != '') ? ('GSTIN ' . $Sites['0']->GSTNo) : ('')) . '
                                 </td>
                                 <td>
                                 Ship To<br>
@@ -439,7 +439,7 @@ class Quotation extends Admin_Controller
                                     <td>' . $value->Qty . '</td>
                                     <td>' . $value->Days . '</td>
                                     <td>' . $value->Rate . '</td>
-                                    <td>' . $value->Qty * $value->Rate * $value->Days. '</td>
+                                    <td>' . $value->Qty * $value->Rate * $value->Days . '</td>
                                 </tr>';
         }
 
@@ -488,11 +488,11 @@ class Quotation extends Admin_Controller
                         </table><br>
                         <div>
                             <b>Notes</b><br>
-                            '.$Quotation['0']->Note.'
+                            ' . $Quotation['0']->Note . '
                         </div><br>
                         <div>
                             <b>Terms & Conditions</b><br/>
-                            '.$Quotation['0']->Term.'<br/><br/><br/>
+                            ' . $Quotation['0']->Term . '<br/><br/><br/>
                             <b>Authorized Signature _________________________________</b>
                         </div>
                     </div>';
